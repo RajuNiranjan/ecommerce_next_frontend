@@ -6,11 +6,15 @@ import "@/styles/globals.css";
 import { Provider } from "react-redux";
 
 export default function App({ Component, pageProps }) {
-  return <Provider store={store}>
-    <AuthProvider>
-      <NavBar />
-      <Toaster />
-      <Component {...pageProps} />
-    </AuthProvider>
-  </Provider>;
+  return (
+    <Provider store={store}>
+      <AuthProvider>
+        <NavBar />
+        <Toaster />
+        <div className="p-4 md:p-10">
+          <Component {...pageProps} />
+        </div>
+      </AuthProvider>
+    </Provider>
+  );
 }

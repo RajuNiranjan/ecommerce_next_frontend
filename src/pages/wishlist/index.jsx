@@ -7,7 +7,7 @@ import React from "react";
 const WishList = () => {
   return (
     <Card className="p-2 flex flex-wrap  hover:shadow-xl w-full">
-      <div className="flex  w-[25%] items-center flex-col gap-2">
+      <div className="flex  w-[10%] items-center flex-col gap-2">
         <Link href="/products/123">
           <Image
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
@@ -18,7 +18,7 @@ const WishList = () => {
           />
         </Link>
       </div>
-      <div className="w-[75%] p-2 flex flex-wrap justify-between">
+      <div className="w-[90%] p-2 flex flex-wrap justify-between">
         <div className="flex flex-col gap-4">
           <h1 className="text-xl font-semibold">T-Shirt</h1>
           <div className="flex items-center gap-1">

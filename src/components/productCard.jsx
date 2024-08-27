@@ -6,11 +6,11 @@ import { Badge } from "./ui/badge";
 
 const ProductCard = () => {
   return (
-    <Card className="w-[250px] h-[400px] p-4 hover:shadow-xl transition-all duration-300 relative">
-      <Badge className="bg-green-500 absolute top-5 left-5 rounded-md">
-        latest
+    <Card className="w-full  h-full  flex flex-col justify-between  md:gap-4  hover:shadow-xl transition-all duration-300 relative">
+      <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
+        Latest
       </Badge>
-      <CardContent className="p-0 md:h-[300px] ">
+      <CardContent className="p-0 h-[70%] ">
         <Link href="/products/123">
           <Image
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
@@ -21,25 +21,26 @@ const ProductCard = () => {
           />
         </Link>
       </CardContent>
-      <CardFooter className="p-0 my-2  w-full flex flex-col items-start">
+      <CardFooter className="p-2 my-2 h-[30%]   w-full flex justify-center  flex-col items-start">
         <Link
           href="/"
-          className="transition-all duration-200 hover:text-red-500"
-        >
+          className="transition-all duration-200 hover:text-red-500">
           <h1 className="text-md font-medium ">Winter T-Shirt</h1>
         </Link>
         <div className="flex justify-between  w-full ">
           <div className="flex flex-col gap-1 ">
-            <p className="text-sm">
+            <p className="text-xs md:text-sm">
               <span>Fabric:</span> <span>cotton</span>
             </p>
-            <p className="text-sm">
+            <p className="text-xs md:text-sm">
               <span>Brand:</span> <span>Tomy Finland</span>
             </p>
           </div>
           <div className="flex flex-col items-end">
-            <h1 className="text-lg text-green-500 font-medium">$599</h1>
-            <small className="line-through text-slate-500">$899</small>
+            <h1 className="text-sm md:text-lg text-green-500 font-medium">
+              $599
+            </h1>
+            <small className="text-xs line-through text-slate-500">$899</small>
           </div>
         </div>
       </CardFooter>
