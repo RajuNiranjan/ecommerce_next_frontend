@@ -7,11 +7,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { EyeIcon, EyeOff } from "lucide-react";
+import { EyeIcon, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   authFailure,
   authStart,
@@ -19,6 +19,7 @@ import {
 } from "@/store/actions/auth.slice";
 import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
+import { useToast } from "@/components/ui/use-toast";
 
 const Register = () => {
   const [registerForm, setRegisterForm] = useState({
@@ -26,10 +27,17 @@ const Register = () => {
     email: "",
     password: "",
   });
-
+  const { toast } = useToast();
   const apiUri = ENV_VAR.API_URI;
   const router = useRouter();
   const dispatch = useDispatch();
+  const { loading, error, user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user]);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -53,11 +61,20 @@ const Register = () => {
     try {
       const res = await axios.post(`${apiUri}/api/auth/register`, registerForm);
       const data = res.data;
-      dispatch(authSuccess({ user: data.user, token: data.token }));
+      localStorage.setItem("token", data.token);
+      dispatch(authSuccess(data.user));
+      toast({
+        title: data.message,
+        duration: 1000,
+      });
       router.push("/");
     } catch (error) {
       console.error(error.response.data);
       dispatch(authFailure(error.response.data));
+      toast({
+        title: error.response.data.message,
+        duration: 1000,
+      });
     }
   };
 
@@ -116,7 +133,18 @@ const Register = () => {
                 </div>
               </div>
             </div>
-            <Button type="submit">Register</Button>
+            {error && (
+              <small className="text-red-500 text-center">
+                {error.message}
+              </small>
+            )}
+            <Button type="submit">
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                "Register"
+              )}
+            </Button>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center items-center">
