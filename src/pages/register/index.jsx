@@ -56,7 +56,7 @@ const Register = () => {
   const handleSubmitRegisterForm = async (e) => {
     e.preventDefault();
     if (!registerForm.email || !registerForm.userName || !registerForm.password)
-      return;
+      return toast({ title: "Please fill all the fields" });
     dispatch(authStart());
     try {
       const res = await axios.post(`${apiUri}/api/auth/register`, registerForm);

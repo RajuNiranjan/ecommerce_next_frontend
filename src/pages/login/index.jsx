@@ -54,7 +54,8 @@ const LogIn = () => {
 
   const handleSubmitLogInForm = async (e) => {
     e.preventDefault();
-    if (!logInForm.email || !logInForm.password) return;
+    if (!logInForm.email || !logInForm.password)
+      return toast({ title: "Please fill all the fields" });
     dispatch(authStart());
     try {
       const res = await axios.post(`${apiUri}/api/auth/login`, logInForm);

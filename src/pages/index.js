@@ -1,3 +1,4 @@
+import ProductCard from '@/components/productCard';
 import React from 'react'
 import { useSelector } from 'react-redux'
 
@@ -8,8 +9,8 @@ const Home = () => {
   console.log("user", user);
 
   return (
-    <div>
-      Home
+    <div className='p-10'>
+      <ProductCard />
     </div>
   )
 }
