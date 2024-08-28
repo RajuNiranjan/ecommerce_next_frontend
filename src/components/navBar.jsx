@@ -36,8 +36,7 @@ const NavBar = () => {
       <div>
         <Link
           href="/"
-          className="hover:text-red-500 transition-all duration-100"
-        >
+          className="hover:text-red-500 transition-all duration-100">
           LOGO
         </Link>
       </div>
@@ -49,16 +48,14 @@ const NavBar = () => {
             href="/wishlist"
             className={`${
               pathName === "/wishlist" && "text-red-500 "
-            } transition-all duration-100`}
-          >
+            } transition-all duration-100`}>
             <Heart />
           </Link>
           <Link
             href="/viewcart"
             className={`${
               pathName === "/viewcart" && "text-red-500 "
-            } transition-all duration-100`}
-          >
+            } transition-all duration-100`}>
             <ShoppingBag />
           </Link>
 
@@ -78,8 +75,7 @@ const NavBar = () => {
                 <DropdownMenuItem>Team</DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogOutAccount}
-                  className="flex justify-between items-center"
-                >
+                  className="flex justify-between items-center">
                   Log Out <LogOut size={16} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -87,8 +83,7 @@ const NavBar = () => {
           ) : (
             <Link
               href={pathName === "/login" ? "/register" : "/login"}
-              className="transition-all duration-500"
-            >
+              className="transition-all duration-500">
               <Button className="transition-all duration-500">
                 {pathName === "/login" ? "REGISTER" : "LOGIN"}
               </Button>
@@ -106,6 +101,12 @@ const NavBar = () => {
             <DropdownMenuContent>
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              {user && (
+                <Link href="/profile" className="cursor-pointer">
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                </Link>
+              )}
+
               <Link href="/wishlist">
                 <DropdownMenuItem>Wish List</DropdownMenuItem>
               </Link>
@@ -115,8 +116,7 @@ const NavBar = () => {
               {user ? (
                 <DropdownMenuItem
                   onClick={handleLogOutAccount}
-                  className="flex justify-between items-center hover:text-red-500"
-                >
+                  className="flex justify-between items-center hover:text-red-500">
                   Log Out <LogOut size={16} />
                 </DropdownMenuItem>
               ) : (

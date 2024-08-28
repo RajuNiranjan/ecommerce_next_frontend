@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
 
-const CartProductCard = () => {
+const ViewCartProductCard = () => {
   return (
     <Card className="h-max w-full sm:h-[200px] relative">
       <Badge className="absolute cursor-pointer -right-2  -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200 ">
@@ -13,7 +13,7 @@ const CartProductCard = () => {
       </Badge>
 
       <CardContent className="h-full p-2  ">
-        <div className="flex items-start justify-start">
+        <div className="flex gap-2 items-start justify-start">
           <div className="h-[180px]">
             <Link href="/products/123">
               <Image
@@ -50,4 +50,4 @@ const CartProductCard = () => {
   );
 };
 
-export default CartProductCard;
+export default ViewCartProductCard;

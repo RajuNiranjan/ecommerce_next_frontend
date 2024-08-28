@@ -1,4 +1,3 @@
-import CartProductCard from "@/components/cartProductCard";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -6,15 +5,32 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import React from "react";
+import { useToast } from "@/components/ui/use-toast";
+import ViewCartProductCard from "@/components/viewCartPorductCard";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const ViewCart = () => {
+  const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
+  const { toast } = useToast();
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+      toast({
+        title: "please login ",
+        duration: 1000,
+      });
+    }
+  }, [user, router]);
+
   return (
     <div className="flex flex-wrap gap-2 w-full">
       <div className="md:w-[70%] w-full gap-2 grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 ">
-        <CartProductCard />
-        <CartProductCard />
-        <CartProductCard />
+        <ViewCartProductCard />
+        <ViewCartProductCard />
+        <ViewCartProductCard />
       </div>
       <div className="md:w-[28%] w-full ">
         <Card className="w-full sticky  top-20">

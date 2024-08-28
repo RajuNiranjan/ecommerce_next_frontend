@@ -31,7 +31,7 @@ const Register = () => {
   const apiUri = ENV_VAR.API_URI;
   const router = useRouter();
   const dispatch = useDispatch();
-  const { loading, error, user } = useSelector((state) => state.auth);
+  const { loading, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (user) {
@@ -72,14 +72,14 @@ const Register = () => {
       console.error(error.response.data);
       dispatch(authFailure(error.response.data));
       toast({
-        title: error.response.data.message,
+        title: error.response.data || "An error occured in register",
         duration: 1000,
       });
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center ">
       <Card className="w-[450px]">
         <CardHeader className="text-center text-4xl font-bold">
           Register
@@ -87,8 +87,7 @@ const Register = () => {
         <CardContent>
           <form
             onSubmit={handleSubmitRegisterForm}
-            className="flex flex-col gap-4"
-          >
+            className="flex flex-col gap-4">
             <div>
               <Label htmlFor="userName">User Name</Label>
               <Input
@@ -133,11 +132,6 @@ const Register = () => {
                 </div>
               </div>
             </div>
-            {error && (
-              <small className="text-red-500 text-center">
-                {error.message}
-              </small>
-            )}
             <Button type="submit">
               {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

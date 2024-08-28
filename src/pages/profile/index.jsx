@@ -1,149 +1,64 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Edit, Loader2, UserCircle } from "lucide-react";
+// import AccountSettings from "@/components/accountSettings";
+// import OrderHistory from "@/components/orderHistory";
+// import ProfileCard from "@/components/profileCard";
+// import { useRouter } from "next/navigation";
+// import React, { useEffect } from "react";
+// import { useSelector } from "react-redux";
+
+// const Profile = () => {
+//   const { user } = useSelector((state) => state.auth);
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     if (!user || user === null) {
+//       router.push("/");
+//     }
+//   }, [user, router]);
+
+//   return (
+//     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//       <ProfileCard />
+//       <div className="space-y-4">
+//         <OrderHistory />
+//         <AccountSettings />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Profile;
+
+import AccountSettings from "@/components/accountSettings";
+import OrderHistory from "@/components/orderHistory";
+import ProfileCard from "@/components/profileCard";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import axios from "axios";
-import { ENV_VAR } from "@/config/envVar";
-import {
-  authFailure,
-  authStart,
-  authSuccess,
-} from "@/store/actions/auth.slice";
-import { useToast } from "@/components/ui/use-toast";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
-  const { loading, user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const router = useRouter();
-  const apiUri = ENV_VAR.API_URI;
-  const userID = user?._id;
-  const dispatch = useDispatch();
-  const { toast } = useToast();
 
   useEffect(() => {
     if (!user) {
       router.push("/");
     }
-  }, [user]);
+  }, [user, router]);
 
-  const [updateUserInfo, setUpdateUserInfo] = useState({
-    userName: user?.userName,
-    password: "",
-  });
-
-  const handleChangeText = (e) => {
-    const { id, value } = e.target;
-    setUpdateUserInfo((prev) => ({
-      ...prev,
-      [id]: value,
-    }));
-  };
-
-  const handleSubmitUpdateUserInfo = async (e) => {
-    e.preventDefault();
-    if (!updateUserInfo.userName)
-      return toast({ title: "Please fill the fields", duration: 1000 });
-    dispatch(authStart());
-    try {
-      const res = await axios.patch(
-        `${apiUri}/api/user/${userID}`,
-        updateUserInfo
-      );
-      const data = res.data;
-      dispatch(authSuccess(data.user));
-      toast({
-        title: data.message,
-        duration: 1000,
-      });
-    } catch (error) {
-      console.log(error);
-      dispatch(authFailure(error.response.data));
-      toast({
-        title: error.response.data,
-        duration: 1000,
-      });
-    }
-  };
-
-  console.log("user from profile", user);
+  if (!user) {
+    return null;
+  }
 
   return (
-    <div>
-      <div className="w-full flex items-center justify-between">
-        <div className="flex  items-center gap-2">
-          <UserCircle />
-          <div>
-            <h1 className="text-xl font-bold">{user?.userName}</h1>
-            <p className="text-gray-500">{user?.email}</p>
-          </div>
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="md:col-span-1">
+          <ProfileCard />
         </div>
-        <div>
-          <Dialog>
-            <DialogTrigger>
-              <Button>
-                <Edit /> Edit Profile
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="text-center text-2xl">
-                  EDIT PROFILE
-                </DialogTitle>
-                <DialogDescription>
-                  <form
-                    onSubmit={handleSubmitUpdateUserInfo}
-                    className="space-y-4"
-                  >
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        type="email"
-                        id="email"
-                        value={user?.email}
-                        disabled
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="userName">User Name</Label>
-                      <Input
-                        type="text"
-                        id="userName"
-                        value={updateUserInfo.userName}
-                        onChange={handleChangeText}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        type="password"
-                        id="password"
-                        value={updateUserInfo.password}
-                        onChange={handleChangeText}
-                      />
-                    </div>
-                    <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        "UPDATE PROFILE"
-                      )}
-                    </Button>
-                  </form>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+
+        <div className="md:col-span-2 space-y-4">
+          <OrderHistory />
+          <AccountSettings />
         </div>
       </div>
     </div>
