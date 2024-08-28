@@ -1,15 +1,21 @@
 import React from "react";
 import { Card, CardContent, CardFooter } from "./ui/card";
+import { Badge } from "./ui/badge";
 import Link from "next/link";
 import Image from "next/image";
-import { Badge } from "./ui/badge";
+import { Heart } from "lucide-react";
 
-const ProductCard = () => {
+const WishListCard = () => {
   return (
     <Card className="w-full overflow-hidden h-full  flex flex-col justify-between  md:gap-4  hover:shadow-xl transition-all duration-300 relative">
       <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
         Latest
       </Badge>
+      <div className="absolute top-2 right-2 flex flex-col">
+        <Badge className="p-1 rounded-full bg-red-500 hover:bg-red-400 cursor-pointer">
+          <Heart size={16} />
+        </Badge>
+      </div>
       <CardContent className="p-0 h-[70%] ">
         <Link href="/products/123">
           <Image
@@ -48,4 +54,4 @@ const ProductCard = () => {
   );
 };
 
-export default ProductCard;
+export default WishListCard;

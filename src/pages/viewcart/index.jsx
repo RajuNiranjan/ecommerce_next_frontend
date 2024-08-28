@@ -11,7 +11,9 @@ import React from "react";
 const ViewCart = () => {
   return (
     <div className="flex flex-wrap gap-2 w-full">
-      <div className="md:w-[70%] w-full">
+      <div className="md:w-[70%] w-full gap-2 grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 ">
+        <CartProductCard />
+        <CartProductCard />
         <CartProductCard />
       </div>
       <div className="md:w-[28%] w-full ">
