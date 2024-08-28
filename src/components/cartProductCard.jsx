@@ -11,6 +11,7 @@ const CartProductCard = () => {
       <Badge className="absolute cursor-pointer -right-2  -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200 ">
         <X size={12} />
       </Badge>
+
       <CardContent className="h-full p-2  ">
         <div className="flex items-start justify-start">
           <div className="h-[180px]">

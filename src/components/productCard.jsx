@@ -10,6 +10,7 @@ const ProductCard = () => {
       <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
         Latest
       </Badge>
+
       <CardContent className="p-0 h-[70%] ">
         <Link href="/products/123">
           <Image
@@ -24,7 +25,8 @@ const ProductCard = () => {
       <CardFooter className="p-2 my-2 h-[30%]   w-full flex justify-center  flex-col items-start">
         <Link
           href="/"
-          className="transition-all duration-200 hover:text-red-500">
+          className="transition-all duration-200 hover:text-red-500"
+        >
           <h1 className="text-md font-medium ">Winter T-Shirt</h1>
         </Link>
         <div className="flex justify-between  w-full ">
