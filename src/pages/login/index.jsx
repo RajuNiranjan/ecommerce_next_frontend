@@ -38,7 +38,7 @@ const LogIn = () => {
     if (user) {
       router.push("/");
     }
-  }, [user]);
+  }, [user, router]);
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);

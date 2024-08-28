@@ -37,7 +37,7 @@ const Register = () => {
     if (user) {
       router.push("/");
     }
-  }, [user]);
+  }, [user, router]);
 
   const [showPassword, setShowPassword] = useState(false);
 

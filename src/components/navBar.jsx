@@ -70,7 +70,10 @@ const NavBar = () => {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <Link href="/profile" className="cursor-pointer">
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                </Link>
+
                 <DropdownMenuItem>Billing</DropdownMenuItem>
                 <DropdownMenuItem>Team</DropdownMenuItem>
                 <DropdownMenuItem
