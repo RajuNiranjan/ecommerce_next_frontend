@@ -4,6 +4,7 @@ import { authSuccess } from '@/store/actions/auth.slice'
 import { ENV_VAR } from '@/config/envVar'
 import axios from "axios"
 
+
 export const AuthProvider = ({ children }) => {
     const [fetched, setFetched] = useState(false)
     const [token, setToken] = useState('')
@@ -19,19 +20,17 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-
     useEffect(() => {
         if (!token || !apiUri || fetched) return
-
         const fetchUserInfo = async () => {
             try {
-                const res = await axios.get(`${apiUri}/api/user`, {
+                const userRes = await axios.get(`${apiUri}/api/user`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                const data = res.data
-                dispatch(authSuccess(data.user))
+                const userData = userRes.data
+                dispatch(authSuccess(userData.user))
                 setFetched(true)
             } catch (error) {
                 console.error("Failed to fetch user info:", error)
