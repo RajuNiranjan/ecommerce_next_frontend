@@ -1,11 +1,4 @@
-import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -19,7 +12,7 @@ import {
   addAddressSuccess,
 } from "@/store/actions/address.slice";
 
-const AddAddressCard = () => {
+const AddAddressCard = ({ address }) => {
   const { user } = useSelector((state) => state.auth);
   const [addAddress, setAddAddress] = useState({
     addressLine1: "",
@@ -29,6 +22,19 @@ const AddAddressCard = () => {
     mobileNumber: "",
     userId: user._id,
   });
+
+  useEffect(() => {
+    if (address) {
+      setAddAddress({
+        addressLine1: address.addressLine1 || "",
+        addressLine2: address.addressLine2 || "",
+        landMark: address.landMark || "",
+        doorNo: address.doorNo || "",
+        mobileNumber: address.mobileNumber || "",
+        userId: user._id,
+      });
+    }
+  }, [address, user._id]);
 
   const { toast } = useToast();
   const dispatch = useDispatch();
@@ -45,25 +51,46 @@ const AddAddressCard = () => {
 
   const handleSubmitAddressForm = async (e) => {
     e.preventDefault();
+
+    // Ensure all fields are filled
     if (
       !addAddress.addressLine1 ||
       !addAddress.addressLine2 ||
       !addAddress.landMark ||
       !addAddress.doorNo ||
       !addAddress.mobileNumber
-    )
+    ) {
       return toast({ title: "Please fill all the fields", duration: 1000 });
+    }
+
     dispatch(addAddressStart());
+
     try {
-      const res = await axios.post(
-        `${apiUri}/api/address/${user._id}`,
-        addAddress,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      let res;
+      if (address) {
+        // Update existing address
+        res = await axios.patch(
+          `${apiUri}/api/address/${address._id}`,
+          addAddress,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else {
+        // Add new address
+        res = await axios.post(
+          `${apiUri}/api/address/${user._id}`,
+          addAddress,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
+
       const data = res.data;
       dispatch(addAddressSuccess(data.address));
       toast({
@@ -71,7 +98,7 @@ const AddAddressCard = () => {
         duration: 1000,
       });
     } catch (error) {
-      console.log(error.response.data);
+      console.error(error.response.data);
       dispatch(addAddressFailure(error.response.data));
       toast({
         title: error.response.data,
@@ -81,65 +108,58 @@ const AddAddressCard = () => {
   };
 
   return (
-    <Card className="bg-transparent border-none shadow-none space-y-4">
-      <CardHeader className="p-0">
-        <CardTitle className="text-center">ADD ADDRESS</CardTitle>
-      </CardHeader>
-      <form onSubmit={handleSubmitAddressForm}>
-        <CardContent className="p-0 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="addressLine1">Address Line 1</Label>
-            <Input
-              type="text"
-              id="addressLine1"
-              value={addAddress.addressLine1}
-              onChange={handleChangeInput}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="addressLine2">Address Line 2</Label>
-            <Input
-              type="text"
-              id="addressLine2"
-              value={addAddress.addressLine2}
-              onChange={handleChangeInput}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="doorNo">Door Number</Label>
-            <Input
-              type="text"
-              id="doorNo"
-              value={addAddress.doorNo}
-              onChange={handleChangeInput}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="mobileNumber">Mobile Number</Label>
-            <Input
-              type="number"
-              id="mobileNumber"
-              value={addAddress.mobileNumber}
-              onChange={handleChangeInput}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="landMark">Land Mark</Label>
-            <Input
-              type="text"
-              id="landMark"
-              value={addAddress.landMark}
-              onChange={handleChangeInput}
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="p-0 mt-4">
-          <Button type="submit" className="w-full">
-            ADD ADDRESS
-          </Button>
-        </CardFooter>
-      </form>
-    </Card>
+    <form onSubmit={handleSubmitAddressForm} className="space-y-2">
+      <div>
+        <Label htmlFor="addressLine1">Address Line 1</Label>
+        <Input
+          type="text"
+          id="addressLine1"
+          value={addAddress.addressLine1}
+          onChange={handleChangeInput}
+        />
+      </div>
+      <div>
+        <Label htmlFor="addressLine2">Address Line 2</Label>
+        <Input
+          type="text"
+          id="addressLine2"
+          value={addAddress.addressLine2}
+          onChange={handleChangeInput}
+        />
+      </div>
+      <div>
+        <Label htmlFor="doorNo">Door Number</Label>
+        <Input
+          type="text"
+          id="doorNo"
+          value={addAddress.doorNo}
+          onChange={handleChangeInput}
+        />
+      </div>
+      <div>
+        <Label htmlFor="mobileNumber">Mobile Number</Label>
+        <Input
+          type="number"
+          id="mobileNumber"
+          value={addAddress.mobileNumber}
+          onChange={handleChangeInput}
+        />
+      </div>
+      <div>
+        <Label htmlFor="landMark">Land Mark</Label>
+        <Input
+          type="text"
+          id="landMark"
+          value={addAddress.landMark}
+          onChange={handleChangeInput}
+        />
+      </div>
+      <div>
+        <Button type="submit" className="w-full">
+          {address ? "UPDATE ADDRESS" : "ADD ADDRESS"}
+        </Button>
+      </div>
+    </form>
   );
 };
 

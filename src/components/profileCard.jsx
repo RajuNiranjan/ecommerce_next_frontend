@@ -72,12 +72,19 @@ const ProfileCard = () => {
         ) : (
           <Dialog>
             <DialogTrigger className=" w-full">
-              <Button className="w-full bg-transparent border text-black hover:bg-transparent">
+              <Button className="w-full bg-transparent border text-black hover:bg-transparent ">
                 Add Address
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <AddAddressCard />
+              <DialogHeader>
+                <DialogTitle className="text-center font-bold">
+                  ADD ADDRESS
+                </DialogTitle>
+              </DialogHeader>
+              <DialogDescription>
+                <AddAddressCard />
+              </DialogDescription>
             </DialogContent>
           </Dialog>
         )}
