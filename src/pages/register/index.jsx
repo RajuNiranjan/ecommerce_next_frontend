@@ -69,10 +69,10 @@ const Register = () => {
       });
       router.push("/");
     } catch (error) {
-      console.error(error.response.data);
-      dispatch(authFailure(error.response.data));
+      console.error(error?.response?.data);
+      dispatch(authFailure(error?.response?.data));
       toast({
-        title: error.response.data || "An error occured in register",
+        title: error?.response?.data || "An error occured in register",
         duration: 1000,
       });
     }

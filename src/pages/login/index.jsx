@@ -68,10 +68,10 @@ const LogIn = () => {
         duration: 1000,
       });
     } catch (error) {
-      console.error(error.response.data);
-      dispatch(authFailure(error.response.data));
+      console.error(error?.response?.data);
+      dispatch(authFailure(error?.response?.data));
       toast({
-        title: error.response.data || "An error occured in login",
+        title: error?.response?.data || "An error occured in login",
         duration: 1000,
       });
     }

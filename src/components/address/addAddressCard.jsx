@@ -11,8 +11,9 @@ import {
   addAddressStart,
   addAddressSuccess,
 } from "@/store/actions/address.slice";
+import { Loader2 } from "lucide-react";
 
-const AddAddressCard = ({ address }) => {
+const AddAddressCard = ({ address, onSuccess }) => {
   const { user } = useSelector((state) => state.auth);
   const [addAddress, setAddAddress] = useState({
     addressLine1: "",
@@ -35,7 +36,7 @@ const AddAddressCard = ({ address }) => {
       });
     }
   }, [address, user._id]);
-
+  const { loading } = useSelector((state) => state.address);
   const { toast } = useToast();
   const dispatch = useDispatch();
   const apiUri = ENV_VAR.API_URI;
@@ -52,7 +53,6 @@ const AddAddressCard = ({ address }) => {
   const handleSubmitAddressForm = async (e) => {
     e.preventDefault();
 
-    // Ensure all fields are filled
     if (
       !addAddress.addressLine1 ||
       !addAddress.addressLine2 ||
@@ -68,7 +68,6 @@ const AddAddressCard = ({ address }) => {
     try {
       let res;
       if (address) {
-        // Update existing address
         res = await axios.patch(
           `${apiUri}/api/address/${address._id}`,
           addAddress,
@@ -79,7 +78,6 @@ const AddAddressCard = ({ address }) => {
           }
         );
       } else {
-        // Add new address
         res = await axios.post(
           `${apiUri}/api/address/${user._id}`,
           addAddress,
@@ -92,16 +90,20 @@ const AddAddressCard = ({ address }) => {
       }
 
       const data = res.data;
+      console.log("data", data.message);
+
       dispatch(addAddressSuccess(data.address));
       toast({
         title: data.message,
         duration: 1000,
       });
+
+      onSuccess();
     } catch (error) {
-      console.error(error.response.data);
-      dispatch(addAddressFailure(error.response.data));
+      console.error(error?.response?.data);
+      dispatch(addAddressFailure(error?.response?.data));
       toast({
-        title: error.response.data,
+        title: error?.response?.data,
         duration: 1000,
       });
     }
@@ -155,7 +157,8 @@ const AddAddressCard = ({ address }) => {
         />
       </div>
       <div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {address ? "UPDATE ADDRESS" : "ADD ADDRESS"}
         </Button>
       </div>

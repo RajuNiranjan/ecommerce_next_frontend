@@ -44,9 +44,9 @@ const ProfileCard = () => {
         dispatch(addAddressSuccess(data.addresses));
       } catch (error) {
         console.log(error);
-        dispatch(addAddressFailure(error.response.data));
+        dispatch(addAddressFailure(error?.response?.data));
         toast({
-          title: error.response.data.message,
+          title: error?.response?.data.message,
           duration: 1000,
         });
       }
