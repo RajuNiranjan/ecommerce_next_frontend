@@ -1,5 +1,11 @@
-import { Card } from "@/components/ui/card";
-import { UserCircle } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Mail, UserCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
@@ -22,10 +28,18 @@ import AddAddressCard from "./address/addAddressCard";
 import AddressCard from "./address/addressCard";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import BecomeSellerRegCard from "./becomeSeller/becomeSellerRegCard";
+import {
+  sellerRegFailure,
+  sellerRegStart,
+  sellerRegSuccess,
+} from "@/store/actions/seller.slice";
+import { Badge } from "./ui/badge";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
   const { address } = useSelector((state) => state.address);
+  const { seller } = useSelector((state) => state.seller);
+
   const apiUri = ENV_VAR.API_URI;
   const { toast } = useToast();
   const dispatch = useDispatch();
@@ -34,17 +48,28 @@ const ProfileCard = () => {
   useEffect(() => {
     const fetchAddress = async () => {
       dispatch(addAddressStart());
+      dispatch(sellerRegStart());
       try {
-        const res = await axios.get(`${apiUri}/api/address`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = res.data;
-        dispatch(addAddressSuccess(data.address));
+        const [addRes, sellerRes] = await Promise.all([
+          axios.get(`${apiUri}/api/address`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          axios.get(`${apiUri}/api/seller`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+        const addData = addRes.data;
+        const sellerData = sellerRes.data;
+        dispatch(addAddressSuccess(addData.address));
+        dispatch(sellerRegSuccess(sellerData.seller));
       } catch (error) {
         console.log(error);
         dispatch(addAddressFailure(error?.response?.data));
+        dispatch(sellerRegFailure(error?.response?.data));
         toast({
           title: error?.response?.data.message,
           duration: 1000,
@@ -94,30 +119,58 @@ const ProfileCard = () => {
       </div>
       <hr />
       {/* BECOME A SELLER */}
-      <div className="w-full space-y-4">
+      {seller ? (
         <div className="space-y-2">
-          <h1 className="font-bold text-xl">Become a Seller</h1>
-          <p>
-            Apply to become a seller on our platform and start sharing your
-            unique fashion designs with our community.
-          </p>
+          <h1 className="font-medium">Store Information</h1>
+          <Card className="hover:shadow-xl transition-all duration-300">
+            <CardHeader className="p-2">
+              <CardTitle className="text-xl font-semibold tracking-wide">
+                <span>{seller.storeName}</span>
+              </CardTitle>
+              <CardContent className="p-2 space-y-2">
+                <Badge className=" bg-transparent border border-gray-300 hover:bg-transparent flex items-center gap-1 text-md font-medium">
+                  <Mail size={16} className="text-gray-500" />{" "}
+                  <p className="text-sm text-blue-500">{seller.storeEmail}</p>
+                </Badge>
+                <div>
+                  <h1>Bio</h1>
+                  <p className="text-sm text-gray-500">
+                    {seller.storeDescription}
+                  </p>
+                </div>
+              </CardContent>
+            </CardHeader>
+            <CardFooter className="w-full p-2">
+              <Button className="w-full">VISIT STORE</Button>
+            </CardFooter>
+          </Card>
         </div>
-        <Dialog>
-          <DialogTrigger className=" w-full">
-            <Button className="w-full">Become a Seller</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="text-center text-xl font-bold">
-                Become a Seller
-              </DialogTitle>
-              <DialogDescription>
-                <BecomeSellerRegCard />
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </div>
+      ) : (
+        <div className="w-full space-y-4">
+          <div className="space-y-2">
+            <h1 className="font-medium text-lg ">Become a Seller</h1>
+            <p>
+              Apply to become a seller on our platform and start sharing your
+              unique fashion designs with our community.
+            </p>
+          </div>
+          <Dialog>
+            <DialogTrigger className=" w-full">
+              <Button className="w-full">Become a Seller</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-center text-xl font-bold">
+                  Become a Seller
+                </DialogTitle>
+                <DialogDescription>
+                  <BecomeSellerRegCard />
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
     </Card>
   );
 };

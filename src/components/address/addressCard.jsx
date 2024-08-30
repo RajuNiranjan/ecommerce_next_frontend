@@ -63,14 +63,14 @@ const AddressCard = () => {
 
   return (
     <div className="relative">
-      <Card className="bg-transparent hover:shadow-xl transition-all duration-300 p-4">
+      <Card className="bg-transparent space-y-1  hover:shadow-xl transition-all duration-300 p-2">
         <CardHeader className="p-0">
           <CardTitle className="text-sm flex  items-center gap-4 flex-wrap font-medium tracking-wide">
             {address.name}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 space-y-4">
-          <p className="text-xs">{formattedAddress}</p>
+          <p className="text-xs text-gray-500">{formattedAddress}</p>
         </CardContent>
         <CardFooter className="p-0">
           <small>
