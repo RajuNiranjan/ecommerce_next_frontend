@@ -41,7 +41,7 @@ const ProfileCard = () => {
           },
         });
         const data = res.data;
-        dispatch(addAddressSuccess(data.addresses));
+        dispatch(addAddressSuccess(data.address));
       } catch (error) {
         console.log(error);
         dispatch(addAddressFailure(error?.response?.data));
@@ -68,7 +68,10 @@ const ProfileCard = () => {
       {/* ADDRESS */}
       <div className="w-full">
         {address ? (
-          <AddressCard />
+          <div>
+            <h1 className="font-medium text-md">Address</h1>
+            <AddressCard />
+          </div>
         ) : (
           <Dialog>
             <DialogTrigger className=" w-full">

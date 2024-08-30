@@ -25,8 +25,10 @@ import {
 } from "@/store/actions/address.slice";
 import { useToast } from "../ui/use-toast";
 import axios from "axios";
+import { ENV_VAR } from "@/config/envVar";
 
 const AddressCard = () => {
+  const apiUri = ENV_VAR.API_URI;
   const { address } = useSelector((state) => state.address);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useDispatch();
@@ -41,13 +43,9 @@ const AddressCard = () => {
     e.preventDefault();
     dispatch(addAddressStart());
     try {
-      const res = await axios.delete(`${apiUri}/api/address/${address._id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.delete(`${apiUri}/api/address/${address._id}`);
       const data = res.data;
-      dispatch(deleteAddress(data.address));
+      dispatch(deleteAddress());
       setIsDialogOpen(false);
       toast({
         title: data.message,
@@ -67,7 +65,9 @@ const AddressCard = () => {
     <div className="relative">
       <Card className="bg-transparent hover:shadow-xl transition-all duration-300 p-4">
         <CardHeader className="p-0">
-          <CardTitle className="text-sm underline">ADDRESS DETAILS</CardTitle>
+          <CardTitle className="text-sm flex  items-center gap-4 flex-wrap font-medium tracking-wide">
+            {address.name}
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0 space-y-4">
           <p className="text-xs">{formattedAddress}</p>
@@ -106,20 +106,22 @@ const AddressCard = () => {
             <TrashIcon size={16} className="text-red-500" />
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
+            <DialogHeader className="space-y-4">
               <DialogTitle>
-                Are you sure you want to delete the address?
+                <h1 className="font-medium">
+                  Are you sure{" "}
+                  <span className="font-semibold text-red-500">
+                    {address.name}
+                  </span>
+                  , you want to delete the address ?
+                </h1>
               </DialogTitle>
               <DialogDescription className="space-x-2 flex items-center">
                 <Button
-                  onClick={() => setIsDialogOpen(false)}
-                  className="w-full bg-transparent hover:bg-transparent border border-gray-400 text-black">
-                  Cancel
-                </Button>
-                <Button
                   onClick={handleDeleteAddress}
-                  className="w-full bg-red-500 hover:bg-red-600">
-                  Delete
+                  className="w-full tracking-wide bg-red-500 hover:bg-red-600"
+                >
+                  CONFIRM DELETE
                 </Button>
               </DialogDescription>
             </DialogHeader>

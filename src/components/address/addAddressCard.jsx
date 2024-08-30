@@ -16,6 +16,7 @@ import { Loader2 } from "lucide-react";
 const AddAddressCard = ({ address, onSuccess }) => {
   const { user } = useSelector((state) => state.auth);
   const [addAddress, setAddAddress] = useState({
+    name: "",
     addressLine1: "",
     addressLine2: "",
     landMark: "",
@@ -27,6 +28,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
   useEffect(() => {
     if (address) {
       setAddAddress({
+        name: address.name || "",
         addressLine1: address.addressLine1 || "",
         addressLine2: address.addressLine2 || "",
         landMark: address.landMark || "",
@@ -54,6 +56,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
     e.preventDefault();
 
     if (
+      !addAddress.name ||
       !addAddress.addressLine1 ||
       !addAddress.addressLine2 ||
       !addAddress.landMark ||
@@ -78,15 +81,11 @@ const AddAddressCard = ({ address, onSuccess }) => {
           }
         );
       } else {
-        res = await axios.post(
-          `${apiUri}/api/address/${user._id}`,
-          addAddress,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        res = await axios.post(`${apiUri}/api/address`, addAddress, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       const data = res.data;
@@ -111,6 +110,15 @@ const AddAddressCard = ({ address, onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmitAddressForm} className="space-y-2">
+      <div>
+        <Label htmlFor="name">Name</Label>
+        <Input
+          type="text"
+          id="name"
+          value={addAddress.name}
+          onChange={handleChangeInput}
+        />
+      </div>
       <div>
         <Label htmlFor="addressLine1">Address Line 1</Label>
         <Input
