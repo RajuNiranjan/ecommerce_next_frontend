@@ -91,22 +91,11 @@ const AccountSettings = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                defaultValue={user?.userName}
-                value={user?.userName}
-                disabled
-              />
+              <Input id="name" value={user?.userName} disabled />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                defaultValue={user?.email}
-                value={user?.email}
-                disabled
-              />
+              <Input id="email" type="email" value={user?.email} disabled />
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

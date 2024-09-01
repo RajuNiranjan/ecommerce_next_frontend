@@ -6,11 +6,7 @@ import { useToast } from "../ui/use-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
-import {
-  addAddressFailure,
-  addAddressStart,
-  addAddressSuccess,
-} from "@/store/actions/address.slice";
+import { authStart, userInfo, authFailure } from "@/store/actions/auth.slice";
 import { Loader2 } from "lucide-react";
 
 const AddAddressCard = ({ address, onSuccess }) => {
@@ -66,7 +62,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       return toast({ title: "Please fill all the fields", duration: 1000 });
     }
 
-    dispatch(addAddressStart());
+    dispatch(authStart());
 
     try {
       let res;
@@ -91,7 +87,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       const data = res.data;
       console.log("data", data.message);
 
-      dispatch(addAddressSuccess(data.address));
+      dispatch(userInfo({ address: data.address }));
       toast({
         title: data.message,
         duration: 1000,
@@ -100,7 +96,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       onSuccess();
     } catch (error) {
       console.error(error?.response?.data);
-      dispatch(addAddressFailure(error?.response?.data));
+      dispatch(authFailure(error?.response?.data));
       toast({
         title: error?.response?.data,
         duration: 1000,
@@ -110,59 +106,61 @@ const AddAddressCard = ({ address, onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmitAddressForm} className="space-y-2">
-      <div>
-        <Label htmlFor="name">Name</Label>
-        <Input
-          type="text"
-          id="name"
-          value={addAddress.name}
-          onChange={handleChangeInput}
-        />
-      </div>
-      <div>
-        <Label htmlFor="addressLine1">Address Line 1</Label>
-        <Input
-          type="text"
-          id="addressLine1"
-          value={addAddress.addressLine1}
-          onChange={handleChangeInput}
-        />
-      </div>
-      <div>
-        <Label htmlFor="addressLine2">Address Line 2</Label>
-        <Input
-          type="text"
-          id="addressLine2"
-          value={addAddress.addressLine2}
-          onChange={handleChangeInput}
-        />
-      </div>
-      <div>
-        <Label htmlFor="doorNo">Door Number</Label>
-        <Input
-          type="text"
-          id="doorNo"
-          value={addAddress.doorNo}
-          onChange={handleChangeInput}
-        />
-      </div>
-      <div>
-        <Label htmlFor="mobileNumber">Mobile Number</Label>
-        <Input
-          type="number"
-          id="mobileNumber"
-          value={addAddress.mobileNumber}
-          onChange={handleChangeInput}
-        />
-      </div>
-      <div>
-        <Label htmlFor="landMark">Land Mark</Label>
-        <Input
-          type="text"
-          id="landMark"
-          value={addAddress.landMark}
-          onChange={handleChangeInput}
-        />
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <Label htmlFor="name">Name</Label>
+          <Input
+            type="text"
+            id="name"
+            value={addAddress.name}
+            onChange={handleChangeInput}
+          />
+        </div>
+        <div>
+          <Label htmlFor="addressLine1">Address Line 1</Label>
+          <Input
+            type="text"
+            id="addressLine1"
+            value={addAddress.addressLine1}
+            onChange={handleChangeInput}
+          />
+        </div>
+        <div>
+          <Label htmlFor="addressLine2">Address Line 2</Label>
+          <Input
+            type="text"
+            id="addressLine2"
+            value={addAddress.addressLine2}
+            onChange={handleChangeInput}
+          />
+        </div>
+        <div>
+          <Label htmlFor="doorNo">Door Number</Label>
+          <Input
+            type="text"
+            id="doorNo"
+            value={addAddress.doorNo}
+            onChange={handleChangeInput}
+          />
+        </div>
+        <div>
+          <Label htmlFor="mobileNumber">Mobile Number</Label>
+          <Input
+            type="number"
+            id="mobileNumber"
+            value={addAddress.mobileNumber}
+            onChange={handleChangeInput}
+          />
+        </div>
+        <div>
+          <Label htmlFor="landMark">Land Mark</Label>
+          <Input
+            type="text"
+            id="landMark"
+            value={addAddress.landMark}
+            onChange={handleChangeInput}
+          />
+        </div>
       </div>
       <div>
         <Button type="submit" className="w-full" disabled={loading}>
