@@ -3,8 +3,12 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { EyeIcon, EyeOff } from "lucide-react";
+import axios from "axios";
+import { ENV_VAR } from "@/config/envVar";
+import { authFailure, authStart, userInfo } from "@/store/actions/auth.slice";
+import { useRouter } from "next/navigation";
 
 const BecomeSellerRegCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -12,7 +16,7 @@ const BecomeSellerRegCard = () => {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
+  const dispatch = useDispatch();
   const [sellerForm, setSellerForm] = useState({
     businessName: "",
     storeName: "",
@@ -23,6 +27,8 @@ const BecomeSellerRegCard = () => {
     userId: user._id,
   });
 
+  const { TOKEN, API_URI } = ENV_VAR;
+  const router = useRouter();
   const handleChangeText = (e) => {
     const { id, value } = e.target;
     setSellerForm((prev) => ({
@@ -31,12 +37,22 @@ const BecomeSellerRegCard = () => {
     }));
   };
 
-  const handleSumbitSellerForm = (e) => {
+  const handleSumbitSellerForm = async (e) => {
     e.preventDefault();
+    dispatch(authStart());
     try {
-      console.log(sellerForm);
+      const res = await axios.post(`${API_URI}/api/seller`, sellerForm, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      const data = res.data;
+
+      dispatch(userInfo({ seller: data.data }));
+      router.push(`/store/${data.seller._id}`);
     } catch (error) {
       console.error(error);
+      dispatch(authFailure(error));
     }
   };
 
@@ -50,7 +66,7 @@ const BecomeSellerRegCard = () => {
       <form onSubmit={handleSumbitSellerForm} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <Label htmlFor="businessName">Bussiness Name</Label>
+            <Label htmlFor="businessName">Business Name</Label>
             <Input
               id="businessName"
               name="businessName"
@@ -88,13 +104,15 @@ const BecomeSellerRegCard = () => {
             />
           </div>
           <div>
-            <Label htmlFor="showPassword">Store Password</Label>
+            <Label htmlFor="storePassword">Store Password</Label>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
-                id="password"
-                value={sellerForm.showPassword}
+                id="storePassword"
+                name="storePassword"
+                value={sellerForm.storePassword}
                 onChange={handleChangeText}
+                required
               />
               <div className="absolute top-2 right-5">
                 {showPassword ? (
@@ -119,7 +137,7 @@ const BecomeSellerRegCard = () => {
               rows={3}
               required
               className="block w-full rounded-md border border-input bg-background px-3 py-2 placeholder-muted-foreground shadow-sm focus:border-primary focus:outline-none focus:ring-primary sm:text-sm"
-              placeholder="Describe the products you sell..."
+              placeholder="123 Main St, City, State"
               value={sellerForm.storeAddress}
               onChange={handleChangeText}
             />
