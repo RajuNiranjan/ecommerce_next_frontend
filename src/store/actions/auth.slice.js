@@ -39,6 +39,8 @@ const authSlice = createSlice({
         ...state.userInfo,
         ...action.payload,
       };
+      state.loading = false;
+      state.error = null;
     },
     deleteAddress: (state) => {
       state.userInfo.address = null;
