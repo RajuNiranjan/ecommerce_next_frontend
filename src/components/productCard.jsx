@@ -31,7 +31,7 @@ const ProductCard = () => {
       });
   };
   return (
-    <Card className="w-full overflow-hidden h-full  flex flex-col justify-between  md:gap-4  hover:shadow-xl transition-all duration-300 relative">
+    <Card className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-300 relative">
       <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
         Latest
       </Badge>
@@ -62,7 +62,7 @@ const ProductCard = () => {
           </svg>
         )}
       </div>
-      <CardContent className="p-0 h-[70%] ">
+      <CardContent className="p-0 h-[70%]  ">
         <Link href="/products/123">
           <Image
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
@@ -73,7 +73,7 @@ const ProductCard = () => {
           />
         </Link>
       </CardContent>
-      <CardFooter className="p-2 my-2 h-[30%]   w-full flex justify-center  flex-col items-start">
+      <CardFooter className="p-2 my-2 h-[30%] w-full flex justify-center  flex-col items-start">
         <Link
           href="/"
           className="transition-all duration-200 hover:text-red-500">

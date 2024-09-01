@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }) {
       <AuthProvider>
         <NavBar />
         <Toaster />
-        <div className="p-4 h-screen md:p-10">
+        <div className="p-4 h-screen">
           <Component {...pageProps} />
         </div>
       </AuthProvider>

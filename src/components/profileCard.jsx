@@ -97,9 +97,9 @@ const ProfileCard = () => {
               <CardTitle className="text-xl font-semibold tracking-wide">
                 <span>{userInfo.seller.storeName}</span>
               </CardTitle>
-              <CardContent className="p-2 space-y-2">
-                <Badge className=" bg-transparent border border-gray-300 hover:bg-transparent flex items-center gap-1 text-md font-medium">
-                  <Mail size={16} className="text-gray-500" />{" "}
+              <CardContent className="p-0 space-y-2">
+                <Badge className="w-max bg-transparent border border-gray-300 hover:bg-transparent flex items-center gap-1 text-md font-medium">
+                  <Mail size={16} className="text-gray-500" />
                   <p className="text-sm text-blue-500">
                     {userInfo.seller.storeEmail}
                   </p>
