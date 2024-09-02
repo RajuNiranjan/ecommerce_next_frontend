@@ -79,7 +79,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       } else {
         res = await axios.post(`${apiUri}/api/address`, addAddress, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${TOKEN}`,
           },
         });
       }
@@ -101,7 +101,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       const errorMessage =
         typeof error?.response?.data === "string"
           ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred in login";
+          : error?.response?.data?.message;
 
       toast({
         title: errorMessage,

@@ -28,6 +28,7 @@ import {
   userInfo as setUserInfo,
 } from "@/store/actions/auth.slice";
 import { useToast } from "./ui/use-toast";
+import Link from "next/link";
 
 const ProfileCard = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -144,7 +145,9 @@ const ProfileCard = () => {
               </CardContent>
             </CardHeader>
             <CardFooter className="w-full p-2">
-              <Button className="w-full">VISIT STORE</Button>
+              <Link className="w-full" href={`/store/${userInfo.seller._id}`}>
+                <Button className="w-full">VISIT STORE</Button>
+              </Link>
             </CardFooter>
           </Card>
         </div>
