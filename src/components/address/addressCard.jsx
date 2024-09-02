@@ -56,8 +56,18 @@ const AddressCard = () => {
       });
       dispatch(setUserInfo({ address: null }));
     } catch (error) {
-      console.log(error);
-      dispatch(authFailure());
+      console.error(error?.response?.data);
+      dispatch(authFailure(error?.response?.data));
+
+      const errorMessage =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message || "An error occurred in login";
+
+      toast({
+        title: errorMessage,
+        duration: 1000,
+      });
     }
   };
 

@@ -54,8 +54,9 @@ const LogIn = () => {
 
   const handleSubmitLogInForm = async (e) => {
     e.preventDefault();
-    if (!logInForm.email || !logInForm.password)
+    if (!logInForm.email || !logInForm.password) {
       return toast({ title: "Please fill all the fields" });
+    }
     dispatch(authStart());
     try {
       const res = await axios.post(`${apiUri}/api/auth/login`, logInForm);
@@ -70,8 +71,14 @@ const LogIn = () => {
     } catch (error) {
       console.error(error?.response?.data);
       dispatch(authFailure(error?.response?.data));
+
+      const errorMessage =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message || "An error occurred in login";
+
       toast({
-        title: error?.response?.data || "An error occured in login",
+        title: errorMessage,
         duration: 1000,
       });
     }

@@ -9,6 +9,7 @@ import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
 import { authFailure, authStart, userInfo } from "@/store/actions/auth.slice";
 import { useRouter } from "next/navigation";
+import { useToast } from "../ui/use-toast";
 
 const BecomeSellerRegCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -16,6 +17,7 @@ const BecomeSellerRegCard = () => {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
   const dispatch = useDispatch();
   const [sellerForm, setSellerForm] = useState({
     businessName: "",
@@ -26,6 +28,7 @@ const BecomeSellerRegCard = () => {
     storePassword: "",
     userId: user._id,
   });
+  const { toast } = useToast();
 
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
@@ -52,8 +55,18 @@ const BecomeSellerRegCard = () => {
       dispatch(userInfo({ seller: data.data }));
       router.push(`/store/${data.seller._id}`);
     } catch (error) {
-      console.error(error);
-      dispatch(authFailure(error));
+      console.error(error?.response?.data);
+      dispatch(authFailure(error?.response?.data));
+
+      const errorMessage =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message || "An error occurred in login";
+
+      toast({
+        title: errorMessage,
+        duration: 1000,
+      });
     }
   };
 

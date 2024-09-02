@@ -27,6 +27,7 @@ import {
   authStart,
   userInfo as setUserInfo,
 } from "@/store/actions/auth.slice";
+import { useToast } from "./ui/use-toast";
 
 const ProfileCard = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -34,6 +35,7 @@ const ProfileCard = () => {
   const TOKEN = localStorage.getItem("token");
   const dispatch = useDispatch();
   console.log("user info from profile card", userInfo);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -60,8 +62,18 @@ const ProfileCard = () => {
           })
         );
       } catch (error) {
-        dispatch(authFailure(error.message || "Failed to fetch user info"));
-        console.error("Failed to fetch user info:", error);
+        console.error(error?.response?.data);
+        dispatch(authFailure(error?.response?.data));
+
+        const errorMessage =
+          typeof error?.response?.data === "string"
+            ? error?.response?.data
+            : error?.response?.data?.message || "An error occurred in login";
+
+        toast({
+          title: errorMessage,
+          duration: 1000,
+        });
       }
     };
 

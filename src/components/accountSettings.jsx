@@ -32,7 +32,6 @@ const AccountSettings = () => {
     newPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -72,10 +71,16 @@ const AccountSettings = () => {
 
       setUpdateUserInfo({ password: "", newPassword: "" });
     } catch (error) {
-      console.error(error);
-      dispatch(authFailure(error.response?.data || "Update failed"));
+      console.error(error?.response?.data);
+      dispatch(authFailure(error?.response?.data));
+
+      const errorMessage =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message || "An error occurred in login";
+
       toast({
-        title: error.response?.data?.message || "An error occurred",
+        title: errorMessage,
         duration: 1000,
       });
     }
