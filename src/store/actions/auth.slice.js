@@ -35,12 +35,11 @@ const authSlice = createSlice({
       state.error = null;
     },
     userInfo: (state, action) => {
-      state.userInfo = {
-        ...state.userInfo,
-        ...action.payload,
-      };
       state.loading = false;
       state.error = null;
+      state.userInfo.user = action.payload.user;
+      state.userInfo.address = action.payload.address;
+      state.userInfo.seller = action.payload.seller;
     },
     deleteAddress: (state) => {
       state.userInfo.address = null;

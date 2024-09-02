@@ -22,31 +22,49 @@ import { Badge } from "./ui/badge";
 import { useEffect } from "react";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
-import { userInfo as setUserInfo } from "@/store/actions/auth.slice";
+import {
+  authFailure,
+  authStart,
+  userInfo as setUserInfo,
+} from "@/store/actions/auth.slice";
 
 const ProfileCard = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const dispatch = useDispatch();
+  console.log("user info from profile card", userInfo);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
+      dispatch(authStart());
+
       try {
         if (!TOKEN) {
           throw new Error("Authorization token is missing.");
         }
+
         const res = await axios.get(`${API_URI}/api/user/userInfo`, {
           headers: {
             Authorization: `Bearer ${TOKEN}`,
           },
         });
+
         const data = res.data;
-        dispatch(setUserInfo(data.data));
+
+        dispatch(
+          setUserInfo({
+            user: data.user,
+            address: data.address,
+            seller: data.seller,
+          })
+        );
       } catch (error) {
+        dispatch(authFailure(error.message || "Failed to fetch user info"));
         console.error("Failed to fetch user info:", error);
       }
     };
+
     fetchUserInfo();
   }, [API_URI, TOKEN, dispatch]);
 
