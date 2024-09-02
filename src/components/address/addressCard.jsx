@@ -28,7 +28,8 @@ import { useToast } from "../ui/use-toast";
 
 const AddressCard = () => {
   const { userInfo } = useSelector((state) => state.auth);
-  const { API_URI, TOKEN } = ENV_VAR;
+  const { API_URI } = ENV_VAR;
+  const TOKEN = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();

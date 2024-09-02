@@ -38,7 +38,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const apiUri = ENV_VAR.API_URI;
-  const token = ENV_VAR.TOKEN;
+  const TOKEN = localStorage.getItem("token");
 
   const handleChangeInput = (e) => {
     const { id, value } = e.target;
@@ -72,7 +72,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
           addAddress,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${TOKEN}`,
             },
           }
         );

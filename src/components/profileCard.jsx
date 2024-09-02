@@ -26,7 +26,8 @@ import { userInfo as setUserInfo } from "@/store/actions/auth.slice";
 
 const ProfileCard = () => {
   const { userInfo } = useSelector((state) => state.auth);
-  const { API_URI, TOKEN } = ENV_VAR;
+  const { API_URI } = ENV_VAR;
+  const TOKEN = localStorage.getItem("token");
   const dispatch = useDispatch();
 
   useEffect(() => {

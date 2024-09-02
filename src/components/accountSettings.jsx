@@ -26,7 +26,7 @@ const AccountSettings = () => {
   const userID = user?._id;
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const token = localStorage.getItem("token");
+  const TOKEN = localStorage.getItem("token");
   const [updateUserInfo, setUpdateUserInfo] = useState({
     password: "",
     newPassword: "",
@@ -57,7 +57,7 @@ const AccountSettings = () => {
         updateUserInfo,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${TOKEN}`,
           },
         }
       );

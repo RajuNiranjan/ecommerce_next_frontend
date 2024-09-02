@@ -27,7 +27,8 @@ const BecomeSellerRegCard = () => {
     userId: user._id,
   });
 
-  const { TOKEN, API_URI } = ENV_VAR;
+  const { API_URI } = ENV_VAR;
+  const TOKEN = localStorage.getItem("token");
   const router = useRouter();
   const handleChangeText = (e) => {
     const { id, value } = e.target;
