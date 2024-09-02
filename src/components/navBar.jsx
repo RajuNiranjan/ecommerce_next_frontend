@@ -21,15 +21,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
+import { useToast } from "./ui/use-toast";
 
 const NavBar = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const pathName = usePathname();
+  const { toast } = useToast();
 
   const handleLogOutAccount = () => {
     localStorage.clear();
     dispatch(authLogOut());
+    toast({
+      title: "Log Out successfully",
+    });
   };
   return (
     <nav className="flex justify-between items-center h-20 px-5 md:px-20 shadow-lg sticky top-0 z-50 bg-white">
