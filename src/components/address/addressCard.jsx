@@ -18,23 +18,23 @@ import {
 import { Edit3, TrashIcon } from "lucide-react";
 import AddAddressCard from "./addAddressCard";
 import { ENV_VAR } from "@/config/envVar";
-import {
-  authFailure,
-  authStart,
-  userInfo as setUserInfo,
-} from "@/store/actions/auth.slice";
 import axios from "axios";
 import { useToast } from "../ui/use-toast";
+import {
+  addressDelete,
+  addressFailure,
+  addressStart,
+} from "@/store/actions/address.slice";
 
 const AddressCard = () => {
-  const { userInfo } = useSelector((state) => state.auth);
+  const { address } = useSelector((state) => state.address);
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const formattedAddress = userInfo.address
-    ? `D.No: ${userInfo.address.doorNo}, ${userInfo.address.addressLine1}, ${userInfo.address.addressLine2}, ${userInfo.address.landMark}`
+  const formattedAddress = address
+    ? `D.No: ${address.doorNo}, ${address.addressLine1}, ${address.addressLine2}, ${address.landMark}`
     : "";
 
   const handleDialogClose = () => {
@@ -42,7 +42,7 @@ const AddressCard = () => {
   };
 
   const handleDeleteAddress = async (id) => {
-    dispatch(authStart());
+    dispatch(addressStart());
     try {
       const res = await axios.delete(`${API_URI}/api/address/${id}`, {
         headers: {
@@ -54,10 +54,10 @@ const AddressCard = () => {
       toast({
         title: data.message,
       });
-      dispatch(setUserInfo({ address: null }));
+      dispatch(addressDelete());
     } catch (error) {
       console.error(error?.response?.data);
-      dispatch(authFailure(error?.response?.data));
+      dispatch(addressFailure(error?.response?.data));
 
       const errorMessage =
         typeof error?.response?.data === "string"
@@ -73,11 +73,11 @@ const AddressCard = () => {
 
   return (
     <div className="relative">
-      {userInfo.address ? (
+      {address ? (
         <Card className="bg-transparent space-y-1 hover:shadow-xl transition-all duration-300 p-2">
           <CardHeader className="p-0">
             <CardTitle className="text-sm flex items-center gap-4 flex-wrap font-medium tracking-wide">
-              {userInfo.address.name}
+              {address.name}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0 space-y-4">
@@ -85,8 +85,7 @@ const AddressCard = () => {
           </CardContent>
           <CardFooter className="p-0">
             <small>
-              <span className="font-semibold">Ph:</span>{" "}
-              {userInfo.address.mobileNumber}
+              <span className="font-semibold">Ph:</span> {address.mobileNumber}
             </small>
           </CardFooter>
         </Card>
@@ -94,20 +93,20 @@ const AddressCard = () => {
         <div>No address available. Please add an address.</div>
       )}
       {/* EDIT ADDRESS */}
-      {userInfo.address && (
+      {address && (
         <div className="absolute -top-2 -right-2">
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger className="bg-blue-300 hover:bg-blue-400 transition-all duration-300 p-1 rounded-full text-white">
               <Edit3 size={14} />
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[650px]">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl font-bold">
                   EDIT ADDRESS
                 </DialogTitle>
                 <DialogDescription>
                   <AddAddressCard
-                    address={userInfo.address}
+                    address={address}
                     onSuccess={handleDialogClose}
                   />
                 </DialogDescription>
@@ -117,12 +116,12 @@ const AddressCard = () => {
         </div>
       )}
       {/* DELETE ADDRESS */}
-      {userInfo.address && (
+      {address && (
         <div className="absolute bottom-2 right-2">
           <TrashIcon
             size={16}
             className="text-red-500 cursor-pointer"
-            onClick={() => handleDeleteAddress(userInfo.address._id)}
+            onClick={() => handleDeleteAddress(address._id)}
           />
         </div>
       )}

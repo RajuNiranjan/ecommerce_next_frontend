@@ -32,6 +32,7 @@ const AccountSettings = () => {
     newPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -77,7 +78,7 @@ const AccountSettings = () => {
       const errorMessage =
         typeof error?.response?.data === "string"
           ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred in login";
+          : error?.response?.data?.message || "An error occurred";
 
       toast({
         title: errorMessage,
@@ -87,7 +88,7 @@ const AccountSettings = () => {
   };
 
   return (
-    <Card className="w-full h-max border border-gray-300 hover:shadow-lg transition-all duration-300 ">
+    <Card className="w-full h-max border border-gray-300 hover:shadow-lg transition-all duration-300">
       <CardHeader>
         <CardTitle className="font-bold text-2xl">Account Settings</CardTitle>
       </CardHeader>

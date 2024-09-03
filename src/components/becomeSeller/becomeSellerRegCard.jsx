@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { EyeIcon, EyeOff } from "lucide-react";
 import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
-import { authFailure, authStart, userInfo } from "@/store/actions/auth.slice";
+import { authFailure, authStart } from "@/store/actions/auth.slice";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
+import { sellerSuccess } from "@/store/actions/seller.slice";
 
 const BecomeSellerRegCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -52,7 +53,7 @@ const BecomeSellerRegCard = () => {
       });
       const data = res.data;
 
-      dispatch(userInfo({ seller: data.data }));
+      dispatch(sellerSuccess(data.data));
       router.push(`/store/${data.seller._id}`);
     } catch (error) {
       console.error(error?.response?.data);

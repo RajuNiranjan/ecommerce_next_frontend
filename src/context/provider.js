@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { authSuccess, userInfo } from "@/store/actions/auth.slice";
+import { authSuccess } from "@/store/actions/auth.slice";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
 
@@ -14,30 +14,22 @@ export const AuthProvider = ({ children }) => {
 
     if (!token || fetched || !apiUri) return;
 
-    const fetchUserInfo = async () => {
+    const fetchUser = async () => {
       try {
-        const [userRes, userInfoRes] = await Promise.all([
-          axios.get(`${apiUri}/api/user`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-          axios.get(`${apiUri}/api/user/userInfo`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }),
-        ]);
+        const userRes = await axios.get(`${apiUri}/api/user`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         dispatch(authSuccess(userRes.data.user));
-        dispatch(userInfo(userInfoRes.data));
         setFetched(true);
       } catch (error) {
-        console.error("Failed to fetch user info:", error);
+        console.error("Failed to fetch user:", error);
       }
     };
 
-    fetchUserInfo();
+    fetchUser();
   }, [apiUri, fetched, dispatch]);
 
   return <>{children}</>;

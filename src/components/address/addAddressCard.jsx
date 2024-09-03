@@ -6,8 +6,12 @@ import { useToast } from "../ui/use-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
-import { authStart, userInfo, authFailure } from "@/store/actions/auth.slice";
 import { Loader2 } from "lucide-react";
+import {
+  addressFailure,
+  addressStart,
+  addressSuccess,
+} from "@/store/actions/address.slice";
 
 const AddAddressCard = ({ address, onSuccess }) => {
   const { user } = useSelector((state) => state.auth);
@@ -62,7 +66,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       return toast({ title: "Please fill all the fields", duration: 1000 });
     }
 
-    dispatch(authStart());
+    dispatch(addressStart());
 
     try {
       let res;
@@ -85,9 +89,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       }
 
       const data = res.data;
-      console.log("data", data.message);
-
-      dispatch(userInfo({ address: data.address }));
+      dispatch(addressSuccess(data.address));
       toast({
         title: data.message,
         duration: 1000,
@@ -96,7 +98,7 @@ const AddAddressCard = ({ address, onSuccess }) => {
       onSuccess();
     } catch (error) {
       console.error(error?.response?.data);
-      dispatch(authFailure(error?.response?.data));
+      dispatch(addressFailure(error?.response?.data));
 
       const errorMessage =
         typeof error?.response?.data === "string"
