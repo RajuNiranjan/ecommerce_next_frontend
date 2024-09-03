@@ -1,7 +1,11 @@
+import StoreLayout from "@/components/sellerStore/storeLayout";
 import React from "react";
 
-const Store = () => {
-  return <div>Store</div>;
+const StoreHome = () => {
+  return (
+    <div>
+      <StoreLayout />
+    </div>
+  );
 };
-
-export default Store;
+export default StoreHome;
