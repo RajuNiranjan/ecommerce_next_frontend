@@ -19,6 +19,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
 import { useToast } from "./ui/use-toast";
@@ -97,42 +113,44 @@ const NavBar = () => {
         </div>
 
         {/* MOBILE MENU */}
-
         <div className="md:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <MenuIcon />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {user && (
-                <Link href="/profile" className="cursor-pointer">
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                </Link>
-              )}
-
-              <Link href="/wishlist">
-                <DropdownMenuItem>Wish List</DropdownMenuItem>
-              </Link>
-              <Link href="/viewcart">
-                <DropdownMenuItem>View Cart</DropdownMenuItem>
-              </Link>
-              {user ? (
-                <DropdownMenuItem
-                  onClick={handleLogOutAccount}
-                  className="flex justify-between items-center hover:text-red-500">
-                  Log Out <LogOut size={16} />
-                </DropdownMenuItem>
-              ) : (
-                <Link href="/login">
-                  <DropdownMenuItem className="flex justify-between items-center hover:text-red-500">
-                    Log In <LogIn size={16} />
-                  </DropdownMenuItem>
-                </Link>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {user ? (
+            <Sheet>
+              <SheetTrigger>
+                <UserCircle2 />
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="flex flex-col justify-between  h-full">
+                <SheetHeader>
+                  <SheetTitle>{user.userName}</SheetTitle>
+                  <Link
+                    href="/profile"
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
+                    PROFILE
+                  </Link>
+                  <Link
+                    href="/wishlist"
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
+                    WISH LIST
+                  </Link>
+                  <Link
+                    href="/viewcart"
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
+                    CART
+                  </Link>
+                </SheetHeader>
+              </SheetContent>
+            </Sheet>
+          ) : (
+            <Link
+              href={pathName === "/login" ? "/register" : "/login"}
+              className="transition-all duration-500">
+              <Button className="transition-all duration-500">
+                {pathName === "/login" ? "REGISTER" : "LOGIN"}
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
