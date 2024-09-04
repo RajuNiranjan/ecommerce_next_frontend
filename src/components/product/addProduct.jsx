@@ -11,7 +11,7 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import Image from "next/image";
-import { X } from "lucide-react";
+import X from "@/assets/svg/x.svg";
 import { Button } from "../ui/button";
 
 const AddProduct = () => {
