@@ -3,13 +3,13 @@ import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
-import X from "../assets/svg/x.svg";
+import { X } from "lucide-react";
 
 const ViewCartProductCard = () => {
   return (
     <Card className="h-max w-full sm:h-[200px] relative">
       <Badge className="absolute cursor-pointer -right-2  -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200 ">
-        <Image src={X} alt="cross" width={10} height={10} />
+        <X size={12} />
       </Badge>
 
       <CardContent className="h-full p-2  ">
