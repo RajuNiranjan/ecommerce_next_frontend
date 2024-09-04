@@ -25,10 +25,9 @@ import {
   addressFailure,
   addressStart,
 } from "@/store/actions/address.slice";
-import { Skeleton } from "../ui/skeleton";
 
 const AddressCard = () => {
-  const { address, loading } = useSelector((state) => state.address);
+  const { address } = useSelector((state) => state.address);
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -74,20 +73,7 @@ const AddressCard = () => {
 
   return (
     <div className="relative">
-      {loading ? (
-        <Card className="bg-transparent space-y-1 hover:shadow-xl transition-all duration-300 p-2">
-          <CardHeader className="p-0">
-            <Skeleton className="w-[100px] h-[20px] rounded-full" />
-          </CardHeader>
-          <CardContent className="p-0 space-y-4">
-            <Skeleton className="w-full h-[20px] rounded" />
-            <Skeleton className="w-[150px] h-[15px] rounded" />
-          </CardContent>
-          <CardFooter className="p-0">
-            <Skeleton className="w-[80px] h-[15px] rounded" />
-          </CardFooter>
-        </Card>
-      ) : address ? (
+      {address ? (
         <Card className="bg-transparent space-y-1 hover:shadow-xl transition-all duration-300 p-2">
           <CardHeader className="p-0">
             <CardTitle className="text-sm flex items-center gap-4 flex-wrap font-medium tracking-wide">

@@ -40,52 +40,68 @@ const ProfileCard = () => {
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const dispatch = useDispatch();
-  const { address } = useSelector((state) => state.address);
-  console.log("address from prof card", address);
-  const { seller, loading } = useSelector((state) => state.seller);
-  console.log("seller from prof card", seller);
+  const { address, loading: addressLoading } = useSelector(
+    (state) => state.address
+  );
+  const { seller, loading: sellerLoading } = useSelector(
+    (state) => state.seller
+  );
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAddress = async () => {
       if (!TOKEN) {
         return;
       }
       dispatch(addressStart());
-      dispatch(sellerStart());
       try {
-        const [addRes, sellRes] = await Promise.all([
-          axios.get(`${API_URI}/api/address`, {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }),
-          axios.get(`${API_URI}/api/seller`, {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }),
-        ]);
+        const response = await axios.get(`${API_URI}/api/address`, {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        });
 
         // Process address data
-        const addData = addRes.data;
+        const addressData = response.data;
 
-        dispatch(addressSuccess(addData.address));
+        dispatch(addressSuccess(addressData.address));
+      } catch (error) {
+        console.error("Failed to fetch address data:", error);
+        dispatch(addressFailure(error));
+      }
+    };
+
+    if (!address) {
+      fetchAddress();
+    }
+  }, [API_URI, TOKEN, dispatch, address]);
+
+  useEffect(() => {
+    const fetchSeller = async () => {
+      if (!TOKEN) {
+        return;
+      }
+      dispatch(sellerStart());
+      try {
+        const response = await axios.get(`${API_URI}/api/seller`, {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        });
 
         // Process seller data
-        const sellData = sellRes.data;
+        const sellerData = response.data;
 
-        dispatch(sellerSuccess(sellData.seller));
+        dispatch(sellerSuccess(sellerData.seller));
       } catch (error) {
-        console.error("Failed to fetch data:", error);
-        dispatch(addressFailure(error));
+        console.error("Failed to fetch seller data:", error);
         dispatch(sellerFailure(error));
       }
     };
 
-    if (!address || !seller) {
-      fetchData();
+    if (!seller) {
+      fetchSeller();
     }
-  }, [API_URI, TOKEN, dispatch, address, seller]);
+  }, [API_URI, TOKEN, dispatch, seller]);
 
   return (
     <Card className="w-full h-full border border-gray-300 hover:shadow-lg transition-all duration-300 p-4 space-y-4">
@@ -100,7 +116,20 @@ const ProfileCard = () => {
       </div>
       {/* ADDRESS */}
       <div className="w-full">
-        {address ? (
+        {addressLoading ? (
+          <Card className="bg-transparent space-y-1 hover:shadow-xl transition-all duration-300 p-2">
+            <CardHeader className="p-0">
+              <Skeleton className="w-[100px] h-[20px] rounded-full" />
+            </CardHeader>
+            <CardContent className="p-0 space-y-4">
+              <Skeleton className="w-full h-[20px] rounded" />
+              <Skeleton className="w-[150px] h-[15px] rounded" />
+            </CardContent>
+            <CardFooter className="p-0">
+              <Skeleton className="w-[80px] h-[15px] rounded" />
+            </CardFooter>
+          </Card>
+        ) : address ? (
           <div>
             <h1 className="font-medium text-md">Address</h1>
             <AddressCard />
@@ -127,7 +156,7 @@ const ProfileCard = () => {
       </div>
       <hr />
       {/* BECOME A SELLER */}
-      {loading ? (
+      {sellerLoading ? (
         <div className="space-y-4">
           <Skeleton className="w-full h-[30px] rounded-lg" />
           <Card className="hover:shadow-xl transition-all duration-300">
