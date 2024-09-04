@@ -4,12 +4,13 @@ import RecentOrdersCard from "@/components/sellerStore/recentOrdersCard";
 import TopSellingProductsCard from "@/components/sellerStore/topSellingProductsCard";
 import NewCustomersCard from "@/components/sellerStore/newCustomersCard";
 import AnalyticsCard from "@/components/sellerStore/analyticsCard";
+import SettingsCard from "@/components/sellerStore/settingsCard";
 
 const StoreHome = () => {
   return (
     <div>
       <Tabs defaultValue="orders">
-        <TabsList className="w-max">
+        <TabsList className="w-max ">
           <TabsTrigger value="orders">ORDERS</TabsTrigger>
           <TabsTrigger value="products">PRODUCTS</TabsTrigger>
           <TabsTrigger value="customers">CUSTOMERS</TabsTrigger>
@@ -28,7 +29,9 @@ const StoreHome = () => {
         <TabsContent value="analytics">
           <AnalyticsCard />
         </TabsContent>
-        <TabsContent value="settings">SETTINGS CARD</TabsContent>
+        <TabsContent value="settings">
+          <SettingsCard />
+        </TabsContent>
       </Tabs>
     </div>
   );
