@@ -33,6 +33,7 @@ import {
   sellerStart,
   sellerSuccess,
 } from "@/store/actions/seller.slice";
+import { Skeleton } from "./ui/skeleton";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -128,7 +129,6 @@ const ProfileCard = () => {
       {/* BECOME A SELLER */}
       {loading ? (
         <div className="space-y-4">
-          {/* Skeleton for the store information card */}
           <Skeleton className="w-full h-[30px] rounded-lg" />
           <Card className="hover:shadow-xl transition-all duration-300">
             <CardHeader className="p-2">
