@@ -28,7 +28,11 @@ import {
   addressStart,
   addressSuccess,
 } from "@/store/actions/address.slice";
-import { sellerSuccess } from "@/store/actions/seller.slice";
+import {
+  sellerFailure,
+  sellerStart,
+  sellerSuccess,
+} from "@/store/actions/seller.slice";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -37,7 +41,7 @@ const ProfileCard = () => {
   const dispatch = useDispatch();
   const { address } = useSelector((state) => state.address);
   console.log("address from prof card", address);
-  const { seller } = useSelector((state) => state.seller);
+  const { seller, loading } = useSelector((state) => state.seller);
   console.log("seller from prof card", seller);
 
   useEffect(() => {
@@ -46,6 +50,7 @@ const ProfileCard = () => {
         return;
       }
       dispatch(addressStart());
+      dispatch(sellerStart());
       try {
         const [addRes, sellRes] = await Promise.all([
           axios.get(`${API_URI}/api/address`, {
@@ -72,6 +77,7 @@ const ProfileCard = () => {
       } catch (error) {
         console.error("Failed to fetch data:", error);
         dispatch(addressFailure(error));
+        dispatch(sellerFailure(error));
       }
     };
 
@@ -120,7 +126,26 @@ const ProfileCard = () => {
       </div>
       <hr />
       {/* BECOME A SELLER */}
-      {seller ? (
+      {loading ? (
+        <div className="space-y-4">
+          {/* Skeleton for the store information card */}
+          <Skeleton className="w-full h-[30px] rounded-lg" />
+          <Card className="hover:shadow-xl transition-all duration-300">
+            <CardHeader className="p-2">
+              <Skeleton className="w-[200px] h-[20px] rounded-full" />
+              <CardContent className="p-0 space-y-2">
+                <Skeleton className="w-[150px] h-[20px] rounded-full" />
+                <Skeleton className="w-full h-[60px] rounded-lg" />
+              </CardContent>
+            </CardHeader>
+            <CardFooter className="w-full p-2">
+              <Skeleton className="w-full h-[40px] rounded-lg" />
+            </CardFooter>
+          </Card>
+          {/* Skeleton for the "Become a Seller" button */}
+          <Skeleton className="w-full h-[40px] rounded-lg" />
+        </div>
+      ) : seller ? (
         <div className="space-y-2">
           <h1 className="font-medium">Store Information</h1>
           <Card className="hover:shadow-xl transition-all duration-300">
