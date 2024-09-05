@@ -13,20 +13,25 @@ import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { Button } from "../ui/button";
+import { useSelector } from "react-redux";
 
 const AddProduct = () => {
+  const { user } = useSelector((state) => state.auth);
+  const { seller } = useSelector((state) => state.seller);
+
   const [addProduct, setAddProduct] = useState({
     productName: "",
     description: "",
     categories: "",
-    size: "",
+    size: [],
     price: "",
     offerPrice: "",
     stockLevel: "",
-    images: "",
+    images: [],
     sku: "",
-    colors: "",
-    userId: "",
+    colors: [],
+    userId: user?._id,
+    storeId: seller?._id,
   });
 
   const handleInputChange = (e) => {
@@ -58,6 +63,7 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="productName">Product Name</Label>
               <Input
+                type="text"
                 id="productName"
                 value={addProduct.productName}
                 onChange={handleInputChange}
@@ -66,6 +72,7 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="sku">SKU</Label>
               <Input
+                type="text"
                 id="sku"
                 value={addProduct.sku}
                 onChange={handleInputChange}
@@ -84,7 +91,7 @@ const AddProduct = () => {
             <div>
               <Label htmlFor="size">Sizes</Label>
               <ToggleGroup
-                type="single"
+                type="multiple"
                 className="flex gap-2"
                 value={addProduct.size}
                 onValueChange={(value) => handleSingleSelection("size", value)}
@@ -99,7 +106,7 @@ const AddProduct = () => {
             <div className="grid gap-2">
               <Label htmlFor="colors">Colors</Label>
               <ToggleGroup
-                type="single"
+                type="multiple"
                 className="flex gap-2"
                 value={addProduct.colors}
                 onValueChange={(value) =>
@@ -130,7 +137,7 @@ const AddProduct = () => {
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="t-shirt">T-SHIRT</SelectItem>
+                  <SelectItem value="tshirt">T-SHIRT</SelectItem>
                   <SelectItem value="shirt">SHIRT</SelectItem>
                   <SelectItem value="pant">PANT</SelectItem>
                 </SelectContent>
@@ -139,6 +146,7 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="stockLevel">Stock Levels</Label>
               <Input
+                type="number"
                 id="stockLevel"
                 value={addProduct.stockLevel}
                 onChange={handleInputChange}
@@ -149,6 +157,7 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="price">Price</Label>
               <Input
+                type="number"
                 id="price"
                 value={addProduct.price}
                 onChange={handleInputChange}
@@ -157,7 +166,9 @@ const AddProduct = () => {
             <div className="space-y-2">
               <Label htmlFor="offerPrice">Offer Price</Label>
               <Input
+                type="number"
                 id="offerPrice"
+                default="500"
                 value={addProduct.offerPrice}
                 onChange={handleInputChange}
               />
@@ -166,11 +177,16 @@ const AddProduct = () => {
           <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-2">
             <div className="space-y-2">
               <Label htmlFor="images">Images</Label>
-              <Input
-                id="images"
-                value={addProduct.images}
-                onChange={handleInputChange}
-              />
+              <div className="flex gap-2">
+                <Input
+                  type="file"
+                  multiple={true}
+                  id="images"
+                  value={addProduct.images}
+                  onChange={handleInputChange}
+                />
+                <Button>UPLOAD</Button>
+              </div>
             </div>
             <div className="flex gap-2">
               <div className="relative">
