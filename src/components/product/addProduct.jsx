@@ -13,7 +13,7 @@ import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Card,
   CardContent,
@@ -22,19 +22,31 @@ import {
   CardTitle,
 } from "../ui/card";
 import { CldUploadWidget } from "next-cloudinary";
+import { ENV_VAR } from "@/config/envVar";
+import axios from "axios";
+import {
+  productFailure,
+  productStart,
+  productSuccess,
+} from "@/store/actions/product.slice";
+import { useToast } from "../ui/use-toast";
 
-const AddProduct = () => {
+const AddProduct = ({ setShowAddProduct }) => {
   const { user } = useSelector((state) => state.auth);
   const { seller } = useSelector((state) => state.seller);
-
+  const { API_URI } = ENV_VAR;
+  const TOKEN = localStorage.getItem("token");
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.product);
+  const { toast } = useToast();
   const [addProduct, setAddProduct] = useState({
     productName: "",
     description: "",
     categories: "",
     size: [],
-    price: "699",
-    offerPrice: "599",
-    stockLevel: "50",
+    price: 699,
+    offerPrice: 599,
+    stockLevel: 50,
     images: [],
     colors: [],
     userId: user?._id,
@@ -66,9 +78,29 @@ const AddProduct = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(addProduct);
+
+    dispatch(productStart());
+    try {
+      const res = await axios.post(`${API_URI}/api/product`, addProduct, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      const data = res.data;
+      console.log("res", res);
+      console.log("data", data.product);
+      toast({
+        title: data.message,
+        duration: 1000,
+      });
+      dispatch(productSuccess(data.product));
+      setShowAddProduct(false);
+    } catch (error) {
+      console.log(error);
+      dispatch(productFailure(error));
+    }
   };
 
   return (
@@ -296,7 +328,7 @@ const AddProduct = () => {
         <CardFooter>
           <div className="w-full">
             <Button className="w-full" type="submit">
-              UPLOAD PRODUCT
+              {loading ? <Loader2 /> : "UPLOAD PRODUCT"}
             </Button>
           </div>
         </CardFooter>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Table,
@@ -11,13 +11,40 @@ import {
 import { Button } from "../ui/button";
 import AddProduct from "../product/addProduct";
 import { EllipsisVerticalIcon, Plus, X } from "lucide-react";
+import { ENV_VAR } from "@/config/envVar";
+import { useDispatch } from "react-redux";
+
+import axios from "axios";
+import { useParams } from "next/navigation";
 
 const TopSellingProductsCard = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
-
+  const { id } = useParams();
+  const { API_URI } = ENV_VAR;
+  const TOKEN = localStorage.getItem("token");
+  const dispatch = useDispatch();
   const handleShowAddProduct = () => {
     setShowAddProduct(!showAddProduct);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${API_URI}/api/product/${id}`, {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        });
+        const data = res.data;
+
+        console.log("Fetched Data:", data);
+      } catch (error) {
+        console.error("Error fetching product:", error.message || error);
+      }
+    };
+
+    fetchData();
+  }, [TOKEN, API_URI, dispatch, id]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,7 +66,7 @@ const TopSellingProductsCard = () => {
           </Button>
         </div>
         {showAddProduct ? (
-          <AddProduct />
+          <AddProduct setShowAddProduct={setShowAddProduct} />
         ) : (
           <Card>
             <CardHeader>
