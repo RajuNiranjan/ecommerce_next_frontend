@@ -93,7 +93,8 @@ const LogIn = () => {
         <CardContent>
           <form
             onSubmit={handleSubmitLogInForm}
-            className="flex flex-col gap-4">
+            className="flex flex-col gap-4"
+          >
             <div>
               <Label htmlFor="email">Email</Label>
               <Input

@@ -17,28 +17,32 @@ import { useParams } from "next/navigation";
 
 const StoreHome = () => {
   const { API_URI } = ENV_VAR;
-  const { id } = useParams();
-  const TOKEN = localStorage.getItem("token");
+  const params = useParams(); // Get the params object first
+  const id = params?.id; // Check if `params` is defined, then extract `id`
+  const TOKEN =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null; // Ensure token retrieval on the client-side
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchStoe = async () => {
-      dispatch(sellerStart());
-      try {
-        const res = await axios.get(`${API_URI}/api/seller/${id}`, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
-        const storeData = res.data;
-
-        dispatch(sellerSuccess(storeData.seller));
-      } catch (error) {
-        console.log(error);
-        dispatch(sellerFailure(error));
-      }
-    };
-    fetchStoe();
+    if (id && TOKEN) {
+      // Only make the API call if id and TOKEN are available
+      const fetchStore = async () => {
+        dispatch(sellerStart());
+        try {
+          const res = await axios.get(`${API_URI}/api/seller/${id}`, {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          });
+          const storeData = res.data;
+          dispatch(sellerSuccess(storeData.seller));
+        } catch (error) {
+          console.log(error);
+          dispatch(sellerFailure(error));
+        }
+      };
+      fetchStore();
+    }
   }, [id, API_URI, TOKEN, dispatch]);
 
   return (
