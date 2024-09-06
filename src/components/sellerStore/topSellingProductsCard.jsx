@@ -8,7 +8,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "../ui/button";
 import AddProduct from "../product/addProduct";
 import { EllipsisVerticalIcon } from "lucide-react";
@@ -24,6 +32,12 @@ const TopSellingProductsCard = () => {
               <Button>Add Product</Button>
             </DialogTrigger>
             <DialogContent>
+              <VisuallyHidden>
+                <DialogHeader>
+                  <DialogTitle></DialogTitle>
+                  <DialogDescription></DialogDescription>
+                </DialogHeader>
+              </VisuallyHidden>
               <AddProduct />
             </DialogContent>
           </Dialog>

@@ -10,13 +10,14 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
 import AddAddressCard from "./address/addAddressCard";
 import AddressCard from "./address/addressCard";
-import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
 import BecomeSellerRegCard from "./becomeSeller/becomeSellerRegCard";
 import { Badge } from "./ui/badge";
 import { useEffect } from "react";
