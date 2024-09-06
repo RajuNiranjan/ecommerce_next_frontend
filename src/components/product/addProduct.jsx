@@ -24,11 +24,10 @@ const AddProduct = () => {
     description: "",
     categories: "",
     size: [],
-    price: "",
-    offerPrice: "",
-    stockLevel: "",
+    price: "699",
+    offerPrice: "599",
+    stockLevel: "50",
     images: [],
-    sku: "",
     colors: [],
     userId: user?._id,
     storeId: seller?._id,
@@ -67,16 +66,29 @@ const AddProduct = () => {
                 id="productName"
                 value={addProduct.productName}
                 onChange={handleInputChange}
+                placeholder="Classic Pullover Hoodie"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="sku">SKU</Label>
-              <Input
-                type="text"
-                id="sku"
-                value={addProduct.sku}
-                onChange={handleInputChange}
-              />
+              <Label htmlFor="categories">Product Category</Label>
+              <Select
+                id="categories"
+                onValueChange={(value) =>
+                  setAddProduct((prevState) => ({
+                    ...prevState,
+                    categories: value,
+                  }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tshirt">T-SHIRT</SelectItem>
+                  <SelectItem value="shirt">SHIRT</SelectItem>
+                  <SelectItem value="pant">PANT</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="space-y-2">
@@ -85,6 +97,7 @@ const AddProduct = () => {
               id="description"
               value={addProduct.description}
               onChange={handleInputChange}
+              placeholder="A cozy and comfortable pullover hoodie made from a soft cotton blend. Features a classic design with a kangaroo pocket and adjustable drawstrings. Perfect for casual wear or lounging."
             />
           </div>
           <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-2">
@@ -121,38 +134,7 @@ const AddProduct = () => {
               </ToggleGroup>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div className="space-y-2">
-              <Label htmlFor="categories">Product Category</Label>
-              <Select
-                id="categories"
-                onValueChange={(value) =>
-                  setAddProduct((prevState) => ({
-                    ...prevState,
-                    categories: value,
-                  }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tshirt">T-SHIRT</SelectItem>
-                  <SelectItem value="shirt">SHIRT</SelectItem>
-                  <SelectItem value="pant">PANT</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="stockLevel">Stock Levels</Label>
-              <Input
-                type="number"
-                id="stockLevel"
-                value={addProduct.stockLevel}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="space-y-2">
               <Label htmlFor="price">Price</Label>
@@ -174,7 +156,7 @@ const AddProduct = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-1 items-center md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 items-end md:grid-cols-2 gap-2">
             <div className="space-y-2">
               <Label htmlFor="images">Images</Label>
               <div className="flex gap-2">
@@ -185,9 +167,11 @@ const AddProduct = () => {
                   value={addProduct.images}
                   onChange={handleInputChange}
                 />
-                <Button>UPLOAD</Button>
               </div>
             </div>
+            <Button>UPLOAD IMAGES</Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <div className="flex gap-2">
               <div className="relative">
                 <Image
@@ -203,6 +187,15 @@ const AddProduct = () => {
                 />
               </div>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="stockLevel">Stock Levels</Label>
+              <Input
+                type="number"
+                id="stockLevel"
+                value={addProduct.stockLevel}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
         </div>
         <div className="w-full">
@@ -216,3 +209,7 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
+
+{
+  /*  */
+}
