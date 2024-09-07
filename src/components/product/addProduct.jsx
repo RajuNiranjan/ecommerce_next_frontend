@@ -25,9 +25,9 @@ import { CldUploadWidget } from "next-cloudinary";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
 import {
-  productFailure,
   productStart,
-  productSuccess,
+  productsFailure,
+  productsSuccess,
 } from "@/store/actions/product.slice";
 import { useToast } from "../ui/use-toast";
 
@@ -37,7 +37,7 @@ const AddProduct = ({ setShowAddProduct }) => {
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.product);
+  const { loading } = useSelector((state) => state.products);
   const { toast } = useToast();
   const [addProduct, setAddProduct] = useState({
     productName: "",
@@ -95,11 +95,11 @@ const AddProduct = ({ setShowAddProduct }) => {
         title: data.message,
         duration: 1000,
       });
-      dispatch(productSuccess(data.product));
+      dispatch(productsSuccess(data.product));
       setShowAddProduct(false);
     } catch (error) {
       console.log(error);
-      dispatch(productFailure(error));
+      dispatch(productsFailure(error.response.data.message));
     }
   };
 
@@ -131,8 +131,7 @@ const AddProduct = ({ setShowAddProduct }) => {
                       ...prevState,
                       categories: value,
                     }))
-                  }
-                >
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -162,36 +161,30 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.size}
                   onValueChange={(value) =>
                     handleSingleSelection("size", value)
-                  }
-                >
+                  }>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="xs"
-                  >
+                    value="xs">
                     XS
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="s"
-                  >
+                    value="s">
                     S
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="m"
-                  >
+                    value="m">
                     M
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="l"
-                  >
+                    value="l">
                     L
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="xl"
-                  >
+                    value="xl">
                     XL
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -204,36 +197,30 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.colors}
                   onValueChange={(value) =>
                     handleSingleSelection("colors", value)
-                  }
-                >
+                  }>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="black"
-                  >
+                    value="black">
                     Black
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="white"
-                  >
+                    value="white">
                     White
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="red"
-                  >
+                    value="red">
                     Red
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="blue"
-                  >
+                    value="blue">
                     Blue
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="green"
-                  >
+                    value="green">
                     Green
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -294,8 +281,7 @@ const AddProduct = ({ setShowAddProduct }) => {
                       ...prevState,
                       images: [...prevState.images, newImageUrl],
                     }));
-                  }}
-                >
+                  }}>
                   {({ open, isLoading }) => {
                     return (
                       <>
