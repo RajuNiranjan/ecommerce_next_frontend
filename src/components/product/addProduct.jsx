@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -31,7 +31,9 @@ import {
 } from "@/store/actions/product.slice";
 import { useToast } from "../ui/use-toast";
 
-const AddProduct = ({ setShowAddProduct }) => {
+const AddProduct = ({ setShowAddProduct, editProduct }) => {
+  console.log("edit product data", editProduct);
+  let productId = editProduct?._id;
   const { user } = useSelector((state) => state.auth);
   const { seller } = useSelector((state) => state.seller);
   const { API_URI } = ENV_VAR;
@@ -55,6 +57,27 @@ const AddProduct = ({ setShowAddProduct }) => {
     userId: user?._id,
     storeId: seller?._id,
   });
+
+  useEffect(() => {
+    if (editProduct) {
+      setAddProduct({
+        productName: editProduct?.productName,
+        description: editProduct?.description,
+        categories: editProduct?.categories,
+        size: editProduct?.size,
+        price: editProduct?.price,
+        offerPrice: editProduct?.offerPrice,
+        stockLevel: editProduct?.stockLevel,
+        images: editProduct?.images,
+        colors: editProduct?.colors,
+        fabric: editProduct?.fabric,
+        brand: editProduct?.brand,
+        saleType: editProduct?.saleType,
+        userId: user?._id,
+        storeId: seller?._id,
+      });
+    }
+  }, [editProduct, user?._id, seller?._id]);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -84,18 +107,56 @@ const AddProduct = ({ setShowAddProduct }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Submitting product data:", addProduct); // Log the data
+    const errors = [];
+
+    // Check each field individually
+    if (!addProduct.productName) errors.push("Product Name is required");
+    if (!addProduct.description) errors.push("Product Description is required");
+    if (!addProduct.categories) errors.push("Product Category is required");
+    if (addProduct.size.length === 0) errors.push("Sizes are required");
+    if (!addProduct.price) errors.push("Price is required");
+    if (!addProduct.offerPrice) errors.push("Offer Price is required");
+    if (!addProduct.stockLevel) errors.push("Stock Levels are required");
+    if (addProduct.images.length === 0)
+      errors.push("At least one image is required");
+    if (addProduct.colors.length === 0) errors.push("Colors are required");
+    if (!addProduct.fabric) errors.push("Fabric is required");
+    if (!addProduct.brand) errors.push("Brand is required");
+    if (!addProduct.saleType) errors.push("Sale Type is required");
+    if (!addProduct.userId) errors.push("User ID is required");
+    if (!addProduct.storeId) errors.push("Store ID is required");
+
+    // If there are any errors, show them in a toast and return
+    if (errors.length > 0) {
+      toast({
+        title: "Validation Error",
+        description: errors.join(", "),
+        duration: 3000,
+      });
+      return;
+    }
 
     dispatch(productStart());
     try {
-      const res = await axios.post(`${API_URI}/api/product`, addProduct, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
+      let res;
+      if (editProduct) {
+        res = await axios.patch(
+          `${API_URI}/api/product/${productId}`,
+          addProduct,
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
+      } else {
+        res = await axios.post(`${API_URI}/api/product`, addProduct, {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        });
+      }
       const data = res.data;
-      console.log("Response:", res);
-      console.log("Product Data:", data.product);
       toast({
         title: data.message,
         duration: 1000,
@@ -111,7 +172,9 @@ const AddProduct = ({ setShowAddProduct }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>ADD NEW PRODUCT</CardTitle>
+        <CardTitle>
+          {editProduct ? "EDIT PRODUCT" : "ADD NEW PRODUCT"}
+        </CardTitle>
       </CardHeader>
       <form onSubmit={handleSubmit} className="space-y-4">
         <CardContent>
@@ -136,8 +199,7 @@ const AddProduct = ({ setShowAddProduct }) => {
                       ...prevState,
                       categories: value,
                     }))
-                  }
-                >
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -167,36 +229,30 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.size}
                   onValueChange={(value) =>
                     handleSingleSelection("size", value)
-                  }
-                >
+                  }>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="xs"
-                  >
+                    value="xs">
                     XS
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="s"
-                  >
+                    value="s">
                     S
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="m"
-                  >
+                    value="m">
                     M
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="l"
-                  >
+                    value="l">
                     L
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="xl"
-                  >
+                    value="xl">
                     XL
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -209,36 +265,30 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.colors}
                   onValueChange={(value) =>
                     handleSingleSelection("colors", value)
-                  }
-                >
+                  }>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="black"
-                  >
+                    value="black">
                     Black
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="white"
-                  >
+                    value="white">
                     White
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="red"
-                  >
+                    value="red">
                     Red
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="blue"
-                  >
+                    value="blue">
                     Blue
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="green"
-                  >
+                    value="green">
                     Green
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -298,15 +348,17 @@ const AddProduct = ({ setShowAddProduct }) => {
                       ...prevState,
                       images: [...prevState.images, newImageUrl],
                     }));
-                  }}
-                >
+                  }}>
                   {({ open, isLoading }) => {
                     return (
                       <>
                         {isLoading ? (
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
-                          <Button className="w-full" onClick={() => open()}>
+                          <Button
+                            type="button"
+                            className="w-full"
+                            onClick={() => open()}>
                             UPLOAD IMAGES
                           </Button>
                         )}
@@ -324,8 +376,7 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.fabric}
                   onValueChange={(value) =>
                     handleSingleSelection("fabric", value)
-                  }
-                >
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Fabric" />
                   </SelectTrigger>
@@ -359,8 +410,7 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.saleType}
                   onValueChange={(value) =>
                     handleSingleSelection("saleType", value)
-                  }
-                >
+                  }>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a sale type" />
                   </SelectTrigger>
@@ -390,7 +440,8 @@ const AddProduct = ({ setShowAddProduct }) => {
         <CardFooter>
           <div className="w-full">
             <Button className="w-full" type="submit">
-              {loading ? <Loader2 /> : "UPLOAD PRODUCT"}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {editProduct ? "UPDATE PRODUCT" : "ADD PRODUCT"}
             </Button>
           </div>
         </CardFooter>

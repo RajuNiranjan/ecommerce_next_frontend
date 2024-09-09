@@ -22,17 +22,26 @@ import {
 } from "@/store/actions/product.slice";
 import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const TopSellingProductsCard = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [token, setToken] = useState("");
+  const [editProduct, setEditProduct] = useState(null); // State to hold the product being edited
   const { id } = useParams();
   const { API_URI } = ENV_VAR;
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
+  const TOKEN = localStorage.getItem("token");
 
   const handleShowAddProduct = () => {
     setShowAddProduct((prev) => !prev);
+    setEditProduct(null); // Reset edit product when opening AddProduct without editing
   };
 
   useEffect(() => {
@@ -53,7 +62,11 @@ const TopSellingProductsCard = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        dispatch(productsSuccess(data.products));
+        if (Array.isArray(data.products)) {
+          dispatch(productsSuccess(data.products));
+        } else {
+          throw new Error("Invalid data format");
+        }
       } catch (error) {
         console.error("Error fetching product:", error.message || error);
         dispatch(productsFailure(error));
@@ -63,14 +76,34 @@ const TopSellingProductsCard = () => {
     fetchProducts();
   }, [token, API_URI, dispatch, id]);
 
+  const handleDeleteProduct = async (id) => {
+    dispatch(productStart());
+    try {
+      const res = await axios.delete(`${API_URI}/api/product/${id}`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      const data = res.data;
+      dispatch(productsSuccess(data.products));
+    } catch (error) {
+      console.log(error);
+      dispatch(productsFailure(error));
+    }
+  };
+
+  const handleEditProduct = (product) => {
+    setEditProduct(product);
+    setShowAddProduct(true);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-4">
         <div className="flex justify-end items-end">
           <Button
             onClick={handleShowAddProduct}
-            className="flex justify-center items-center gap-2"
-          >
+            className="flex justify-center items-center gap-2">
             {showAddProduct ? (
               <>
                 <X size={22} /> CANCEL
@@ -83,7 +116,10 @@ const TopSellingProductsCard = () => {
           </Button>
         </div>
         {showAddProduct ? (
-          <AddProduct setShowAddProduct={setShowAddProduct} />
+          <AddProduct
+            setShowAddProduct={setShowAddProduct}
+            editProduct={editProduct}
+          />
         ) : (
           <Card>
             <CardHeader>
@@ -135,11 +171,11 @@ const TopSellingProductsCard = () => {
                         </TableCell>
                       </TableRow>
                     ))
-                  ) : products.length === 0 ? (
+                  ) : Array.isArray(products) && products.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8}>No Product Available</TableCell>
                     </TableRow>
-                  ) : (
+                  ) : Array.isArray(products) && products.length > 0 ? (
                     products.map((item, index) => (
                       <TableRow key={index}>
                         <TableCell>
@@ -158,10 +194,28 @@ const TopSellingProductsCard = () => {
                         <TableCell>{item.size.join(", ")}</TableCell>
                         <TableCell>{item.colors.join(", ")}</TableCell>
                         <TableCell>
-                          <EllipsisVerticalIcon />
+                          <DropdownMenu>
+                            <DropdownMenuTrigger>
+                              <EllipsisVerticalIcon />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <DropdownMenuItem
+                                onClick={() => handleEditProduct(item)}>
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleDeleteProduct(item._id)}>
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </TableCell>
                       </TableRow>
                     ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={8}>Invalid data format</TableCell>
+                    </TableRow>
                   )}
                 </TableBody>
               </Table>
