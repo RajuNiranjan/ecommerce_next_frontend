@@ -21,6 +21,7 @@ import {
   productsSuccess,
 } from "@/store/actions/product.slice";
 import { Skeleton } from "../ui/skeleton"; // Import Skeleton properly
+import Image from "next/image";
 
 const TopSellingProductsCard = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -99,6 +100,7 @@ const TopSellingProductsCard = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-[100px]">PRODUCT IMAGE</TableHead>
                     <TableHead className="w-[150px]">PRODUCT NAME</TableHead>
                     <TableHead className="w-[50px]">CATEGORY</TableHead>
                     <TableHead className="w-[50px]">PRICE</TableHead>
@@ -131,6 +133,9 @@ const TopSellingProductsCard = () => {
                           <Skeleton className="w-[100px] h-[20px] rounded-full" />
                         </TableCell>
                         <TableCell>
+                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                        </TableCell>
+                        <TableCell>
                           <Skeleton className="w-[20px] h-[20px] rounded-full" />
                         </TableCell>
                       </TableRow>
@@ -142,6 +147,14 @@ const TopSellingProductsCard = () => {
                   ) : (
                     products.map((item, index) => (
                       <TableRow key={index}>
+                        <TableCell className="font-medium">
+                          <Image
+                            src={item.images[0]}
+                            alt="product_image"
+                            width={50}
+                            height={50}
+                          />
+                        </TableCell>
                         <TableCell className="font-medium">
                           {item.productName}
                         </TableCell>
