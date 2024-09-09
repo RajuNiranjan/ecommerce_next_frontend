@@ -6,26 +6,33 @@ import NewCustomersCard from "@/components/sellerStore/newCustomersCard";
 import AnalyticsCard from "@/components/sellerStore/analyticsCard";
 import SettingsCard from "@/components/sellerStore/settingsCard";
 import { ENV_VAR } from "@/config/envVar";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import {
   sellerSuccess,
   sellerFailure,
   sellerStart,
 } from "@/store/actions/seller.slice";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const StoreHome = () => {
+  const { user } = useSelector((state) => state.auth);
+  const router = useRouter();
   const { API_URI } = ENV_VAR;
-  const params = useParams(); // Get the params object first
-  const id = params?.id; // Check if `params` is defined, then extract `id`
+  const params = useParams();
+  const id = params?.id;
   const TOKEN =
     typeof window !== "undefined" ? localStorage.getItem("token") : null; // Ensure token retrieval on the client-side
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
+  useEffect(() => {
     if (id && TOKEN) {
-      // Only make the API call if id and TOKEN are available
       const fetchStore = async () => {
         dispatch(sellerStart());
         try {
