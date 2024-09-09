@@ -3,7 +3,8 @@ const { createSlice } = require("@reduxjs/toolkit")
 const initialState = {
     loading: false,
     error: null,
-    products: []
+    products: [],
+    allProducts: []
 }
 
 const productsSlice = createSlice({
@@ -13,7 +14,8 @@ const productsSlice = createSlice({
         productStart: (state) => {
             state.loading = true;
             state.error = null;
-            state.products = []
+            state.products = [];
+            state.allProducts = []
         },
         productsSuccess: (state, action) => {
             state.products = action.payload;
@@ -23,11 +25,17 @@ const productsSlice = createSlice({
         productsFailure: (state, action) => {
             state.loading = false;
             state.error = action.payload;
-            state.products = []
+            state.products = [],
+                state.allProducts = []
+        },
+        allProductSuccess: (state, action) => {
+            state.loading = false;
+            state.error = null;
+            state.allProducts = action.payload
         }
     }
 })
 
-export const { productStart, productsFailure, productsSuccess } = productsSlice.actions
+export const { productStart, productsFailure, productsSuccess, allProductSuccess } = productsSlice.actions
 
 export default productsSlice.reducer

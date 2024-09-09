@@ -1,35 +1,62 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { ENV_VAR } from "@/config/envVar";
+import axios from "axios";
 import { Heart, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const SingleProduct = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
+  const { API_URI } = ENV_VAR;
   const [heart, setHeart] = useState(false);
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
+  const [productData, setProductData] = useState({});
+
+  useEffect(() => {
+    const fetchSingeProduct = async () => {
+      try {
+        if (id) {
+          const res = await axios.get(
+            `${API_URI}/api/product/singel_product/${id}`
+          );
+          const data = res.data;
+          setProductData(data.product);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchSingeProduct();
+  }, [API_URI, id]);
+
   const handleAdd = () => {
     if (user) {
       setHeart(!heart);
-      if (heart === true) {
+      if (heart) {
         toast({
           title: "Item Removed from Wish list",
           duration: 1000,
         });
       } else {
         toast({
-          title: "Item Added from Wish list",
+          title: "Item Added to Wish list",
           duration: 1000,
         });
       }
-    } else
+    } else {
       toast({
         title: "Please login",
         duration: 1000,
       });
+    }
   };
 
   return (
@@ -41,7 +68,8 @@ const SingleProduct = () => {
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
             width={500}
             height={500}
-            alt=""
+            alt="Product Image"
+            priority
           />
           <Badge className="absolute rounded-l bg-yellow-500 top-0 left-0">
             BESTSELLER
@@ -53,7 +81,8 @@ const SingleProduct = () => {
                 xmlns="http://www.w3.org/1000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8  text-red-500 cursor-pointer">
+                className="size-8 text-red-500 cursor-pointer"
+              >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -64,7 +93,8 @@ const SingleProduct = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-8 text-white cursor-pointer">
+                className="size-8 text-white cursor-pointer"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -78,15 +108,19 @@ const SingleProduct = () => {
       {/* RIGHT CONTAINER */}
       <div className=" flex flex-col  gap-4 ">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-semibold  cursor-default">T-Shirt</h1>
+          <h1 className="text-4xl font-semibold  cursor-default">T-SHIRT</h1>
           <h3 className="text-xl text-gray-500 font-medium">
-            Men&apos;s Green Oversized T-shirt
+            {productData.productName}
           </h3>
         </div>
         <div>
           <div className="font-mono flex gap-2 items-center">
-            <span className="text-2xl font-semibold">$569</span>
-            <span className="line-through text-gray-500">$899</span>
+            <span className="text-2xl font-semibold">
+              ₹ {productData.offerPrice}
+            </span>
+            <span className="line-through text-gray-500">
+              ₹ {productData.price}
+            </span>
             <span className="font-medium text-green-600">22% off</span>
           </div>
           <h3 className="text-gray-500 text-lg">inclusive of all taxes</h3>
@@ -102,49 +136,42 @@ const SingleProduct = () => {
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
             width={500}
             height={500}
-            alt=""
+            alt="Product Image"
             className="rounded-sm shadow-lg cursor-pointer"
           />
           <Image
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
             width={500}
             height={500}
-            alt=""
+            alt="Product Image"
             className="rounded-sm shadow-lg cursor-pointer"
           />
           <Image
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
             width={500}
             height={500}
-            alt=""
+            alt="Product Image"
             className="rounded-sm shadow-lg cursor-pointer"
           />
           <Image
             src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
             width={500}
             height={500}
-            alt=""
+            alt="Product Image"
             className="rounded-sm shadow-lg cursor-pointer"
           />
         </div>
         <div className="flex flex-col gap-2">
           <h1 className="font-bold text-xl ">Select Size</h1>
           <div className="flex gap-4">
-            <Button className="h-7 w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center ">
-              S
-            </Button>
-            <Button className="h-7 w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center ">
-              M
-            </Button>
-            <Button className="h-7 w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white transition-all duration-300 rounded-sm flex justify-center items-center ">
-              L
-            </Button>
-            <Button className="h-7 w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white transition-all duration-300 rounded-sm flex justify-center items-center ">
-              XL
-            </Button>
-            <Button className="h-7 w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white transition-all duration-300 rounded-sm flex justify-center items-center ">
-              XXL
-            </Button>
+            {productData?.size?.map((size, index) => (
+              <Button
+                key={index}
+                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center "
+              >
+                {size}
+              </Button>
+            ))}
           </div>
         </div>
         <div className="flex gap-4 w-full flex-col md:flex-row">
