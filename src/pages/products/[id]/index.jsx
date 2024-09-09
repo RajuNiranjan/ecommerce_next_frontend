@@ -9,6 +9,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const SingleProduct = () => {
   const router = useRouter();
@@ -19,7 +26,6 @@ const SingleProduct = () => {
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const [productData, setProductData] = useState({});
-
   useEffect(() => {
     const fetchSingeProduct = async () => {
       try {
@@ -64,15 +70,26 @@ const SingleProduct = () => {
       {/* LEFT CONTAINER */}
       <div className="flex flex-col md:flex-row justify-center items-center">
         <div className="relative rounded-sm overflow-hidden ">
-          <Image
-            src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
-            width={500}
-            height={500}
-            alt="Product Image"
-            priority
-          />
+          <Carousel className="bg-red-500">
+            <CarouselContent>
+              {productData?.images?.map((image, index) => (
+                <CarouselItem key={index}>
+                  <Image
+                    // src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
+                    src={image}
+                    width={500}
+                    height={500}
+                    alt="Product Image"
+                    priority
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
           <Badge className="absolute rounded-l bg-yellow-500 top-0 left-0">
-            BESTSELLER
+            {productData?.saleType}
           </Badge>
           <div className="absolute top-5 right-5 ">
             {heart ? (
@@ -108,7 +125,9 @@ const SingleProduct = () => {
       {/* RIGHT CONTAINER */}
       <div className=" flex flex-col  gap-4 ">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-semibold  cursor-default">T-SHIRT</h1>
+          <h1 className="text-4xl font-semibold  cursor-default">
+            {productData?.categories}
+          </h1>
           <h3 className="text-xl text-gray-500 font-medium">
             {productData.productName}
           </h3>
@@ -128,39 +147,10 @@ const SingleProduct = () => {
         <div className="space-x-2">
           <Badge className="rounded-sm bg-gray-500">OVERSIZE FIT</Badge>
           <Badge className="rounded-sm border border-black text-black bg-transparent">
-            100% COTTON
+            100% {productData?.fabric}
           </Badge>
         </div>
-        <div className="flex h-20 w-[60px] gap-2 ">
-          <Image
-            src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
-            width={500}
-            height={500}
-            alt="Product Image"
-            className="rounded-sm shadow-lg cursor-pointer"
-          />
-          <Image
-            src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
-            width={500}
-            height={500}
-            alt="Product Image"
-            className="rounded-sm shadow-lg cursor-pointer"
-          />
-          <Image
-            src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
-            width={500}
-            height={500}
-            alt="Product Image"
-            className="rounded-sm shadow-lg cursor-pointer"
-          />
-          <Image
-            src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
-            width={500}
-            height={500}
-            alt="Product Image"
-            className="rounded-sm shadow-lg cursor-pointer"
-          />
-        </div>
+
         <div className="flex flex-col gap-2">
           <h1 className="font-bold text-xl ">Select Size</h1>
           <div className="flex gap-4">

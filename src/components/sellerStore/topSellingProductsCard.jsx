@@ -153,7 +153,7 @@ const TopSellingProductsCard = () => {
                         </TableCell>
                         <TableCell>{item.productName}</TableCell>
                         <TableCell>{item.categories}</TableCell>
-                        <TableCell>${item.price}</TableCell>
+                        <TableCell>₹ {item.price}</TableCell>
                         <TableCell>{item.stockLevel}</TableCell>
                         <TableCell>{item.size.join(", ")}</TableCell>
                         <TableCell>{item.colors.join(", ")}</TableCell>
