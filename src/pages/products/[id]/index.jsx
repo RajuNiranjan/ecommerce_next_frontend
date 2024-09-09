@@ -20,12 +20,16 @@ import {
 const SingleProduct = () => {
   const router = useRouter();
   const { id } = router.query;
-
   const { API_URI } = ENV_VAR;
   const [heart, setHeart] = useState(false);
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const [productData, setProductData] = useState({});
+  const offer =
+    ((productData.price - productData.offerPrice) / productData.price) * 100;
+  Math.round(offer);
+  const roundedOffer = Math.round(offer);
+
   useEffect(() => {
     const fetchSingeProduct = async () => {
       try {
@@ -68,15 +72,15 @@ const SingleProduct = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 space-x-2 ">
       {/* LEFT CONTAINER */}
-      <div className="flex flex-col md:flex-row justify-center items-center">
+      <div className="flex justify-center items-center">
         <div className="relative rounded-sm overflow-hidden ">
-          <Carousel className="bg-red-500">
+          <Carousel className="w-[450px]">
             <CarouselContent>
               {productData?.images?.map((image, index) => (
                 <CarouselItem key={index}>
                   <Image
-                    // src="https://d30b9hrf6faw09.cloudfront.net/upload/20240808200545WhatsApp%20Image%202024-08-08%20at%208.04.53%20PM.jpeg"
                     src={image}
+                    className="cursor-pointer "
                     width={500}
                     height={500}
                     alt="Product Image"
@@ -98,8 +102,7 @@ const SingleProduct = () => {
                 xmlns="http://www.w3.org/1000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8 text-red-500 cursor-pointer"
-              >
+                className="size-8 text-red-500 cursor-pointer">
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -110,8 +113,7 @@ const SingleProduct = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-8 text-white cursor-pointer"
-              >
+                className="size-8 text-white cursor-pointer">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -135,12 +137,14 @@ const SingleProduct = () => {
         <div>
           <div className="font-mono flex gap-2 items-center">
             <span className="text-2xl font-semibold">
-              ₹ {productData.offerPrice}
+              ₹{productData.offerPrice}
             </span>
             <span className="line-through text-gray-500">
-              ₹ {productData.price}
+              ₹{productData.price}
             </span>
-            <span className="font-medium text-green-600">22% off</span>
+            <span className="font-medium text-green-600">
+              {roundedOffer}% off
+            </span>
           </div>
           <h3 className="text-gray-500 text-lg">inclusive of all taxes</h3>
         </div>
@@ -157,8 +161,7 @@ const SingleProduct = () => {
             {productData?.size?.map((size, index) => (
               <Button
                 key={index}
-                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center "
-              >
+                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center ">
                 {size}
               </Button>
             ))}
