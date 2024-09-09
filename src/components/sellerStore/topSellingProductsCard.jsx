@@ -20,7 +20,7 @@ import {
   productsFailure,
   productsSuccess,
 } from "@/store/actions/product.slice";
-import { Skeleton } from "../ui/skeleton"; // Import Skeleton properly
+import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
 
 const TopSellingProductsCard = () => {
@@ -32,40 +32,35 @@ const TopSellingProductsCard = () => {
   const { products, loading } = useSelector((state) => state.products);
 
   const handleShowAddProduct = () => {
-    setShowAddProduct(!showAddProduct);
+    setShowAddProduct((prev) => !prev);
   };
 
   useEffect(() => {
-    const fetchToken = () => {
-      const savedToken = localStorage.getItem("token");
-      if (savedToken) {
-        setToken(savedToken);
-      }
-    };
-
-    fetchToken();
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    }
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!token) return; // Prevent API call if token is not available
+    if (!token || !id) return;
+
+    const fetchProducts = async () => {
       dispatch(productStart());
       try {
-        const res = await axios.get(`${API_URI}/api/product/${id}`, {
+        const { data } = await axios.get(`${API_URI}/api/product/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        const data = res.data;
         dispatch(productsSuccess(data.products));
-        console.log("Fetched Data:", data);
       } catch (error) {
         console.error("Error fetching product:", error.message || error);
         dispatch(productsFailure(error));
       }
     };
 
-    fetchData();
+    fetchProducts();
   }, [token, API_URI, dispatch, id]);
 
   return (
@@ -115,63 +110,53 @@ const TopSellingProductsCard = () => {
                     Array.from({ length: 5 }).map((_, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[100px] h-[50px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[150px] h-[20px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[100px] h-[20px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[100px] h-[20px] rounded-md" />
                         </TableCell>
                         <TableCell>
-                          <Skeleton className="w-[20px] h-[20px] rounded-full" />
+                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
                         </TableCell>
                       </TableRow>
                     ))
                   ) : products.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7}>No Product Available</TableCell>
+                      <TableCell colSpan={8}>No Product Available</TableCell>
                     </TableRow>
                   ) : (
                     products.map((item, index) => (
                       <TableRow key={index}>
-                        <TableCell className="font-medium">
+                        <TableCell>
                           <Image
-                            src={item.images[0]}
-                            alt="product_image"
+                            src={item.images[0] || "/placeholder.jpg"}
+                            alt="Product Image"
                             width={50}
                             height={50}
+                            className="object-cover"
                           />
                         </TableCell>
-                        <TableCell className="font-medium">
-                          {item.productName}
-                        </TableCell>
+                        <TableCell>{item.productName}</TableCell>
                         <TableCell>{item.categories}</TableCell>
-                        <TableCell>$ {item.price}</TableCell>
+                        <TableCell>${item.price}</TableCell>
                         <TableCell>{item.stockLevel}</TableCell>
-
-                        <TableCell>
-                          {item.size.map((size, sizeIndex) => (
-                            <p key={sizeIndex}>{size}</p>
-                          ))}
-                        </TableCell>
-                        <TableCell>
-                          {item.colors.map((color, colorIndex) => (
-                            <div key={colorIndex}>{color}</div>
-                          ))}
-                        </TableCell>
+                        <TableCell>{item.size.join(", ")}</TableCell>
+                        <TableCell>{item.colors.join(", ")}</TableCell>
                         <TableCell>
                           <EllipsisVerticalIcon />
                         </TableCell>

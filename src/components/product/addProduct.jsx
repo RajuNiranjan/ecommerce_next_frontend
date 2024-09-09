@@ -49,6 +49,9 @@ const AddProduct = ({ setShowAddProduct }) => {
     stockLevel: 50,
     images: [],
     colors: [],
+    fabric: "",
+    brand: "",
+    saleType: "",
     userId: user?._id,
     storeId: seller?._id,
   });
@@ -81,6 +84,8 @@ const AddProduct = ({ setShowAddProduct }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("Submitting product data:", addProduct); // Log the data
+
     dispatch(productStart());
     try {
       const res = await axios.post(`${API_URI}/api/product`, addProduct, {
@@ -89,8 +94,8 @@ const AddProduct = ({ setShowAddProduct }) => {
         },
       });
       const data = res.data;
-      console.log("res", res);
-      console.log("data", data.product);
+      console.log("Response:", res);
+      console.log("Product Data:", data.product);
       toast({
         title: data.message,
         duration: 1000,
@@ -98,7 +103,7 @@ const AddProduct = ({ setShowAddProduct }) => {
       dispatch(productsSuccess(data.product));
       setShowAddProduct(false);
     } catch (error) {
-      console.log(error);
+      console.log("Error:", error);
       dispatch(productsFailure(error.response.data.message));
     }
   };
@@ -131,7 +136,8 @@ const AddProduct = ({ setShowAddProduct }) => {
                       ...prevState,
                       categories: value,
                     }))
-                  }>
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
@@ -161,30 +167,36 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.size}
                   onValueChange={(value) =>
                     handleSingleSelection("size", value)
-                  }>
+                  }
+                >
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="xs">
+                    value="xs"
+                  >
                     XS
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="s">
+                    value="s"
+                  >
                     S
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="m">
+                    value="m"
+                  >
                     M
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="l">
+                    value="l"
+                  >
                     L
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="xl">
+                    value="xl"
+                  >
                     XL
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -197,30 +209,36 @@ const AddProduct = ({ setShowAddProduct }) => {
                   value={addProduct.colors}
                   onValueChange={(value) =>
                     handleSingleSelection("colors", value)
-                  }>
+                  }
+                >
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="black">
+                    value="black"
+                  >
                     Black
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="white">
+                    value="white"
+                  >
                     White
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="red">
+                    value="red"
+                  >
                     Red
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="blue">
+                    value="blue"
+                  >
                     Blue
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     className="border border-blue-200 "
-                    value="green">
+                    value="green"
+                  >
                     Green
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -242,7 +260,6 @@ const AddProduct = ({ setShowAddProduct }) => {
                 <Input
                   type="number"
                   id="offerPrice"
-                  default="500"
                   value={addProduct.offerPrice}
                   onChange={handleInputChange}
                 />
@@ -281,7 +298,8 @@ const AddProduct = ({ setShowAddProduct }) => {
                       ...prevState,
                       images: [...prevState.images, newImageUrl],
                     }));
-                  }}>
+                  }}
+                >
                   {({ open, isLoading }) => {
                     return (
                       <>
@@ -299,6 +317,64 @@ const AddProduct = ({ setShowAddProduct }) => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="space-y-2">
+                <Label htmlFor="fabric">Material/Fabric</Label>
+                <Select
+                  id="fabric"
+                  value={addProduct.fabric}
+                  onValueChange={(value) =>
+                    handleSingleSelection("fabric", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a Fabric" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="COTTON">COTTON</SelectItem>
+                    <SelectItem value="JEANS">JEANS</SelectItem>
+                    <SelectItem value="NYLON">NYLON</SelectItem>
+                    <SelectItem value="POLYSTER">POLYSTER</SelectItem>
+                    <SelectItem value="WOOL">WOOL</SelectItem>
+                    <SelectItem value="LINEN">LINEN</SelectItem>
+                    <SelectItem value="SILK">SILK</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="brand">Brand</Label>
+                <Input
+                  type="text"
+                  id="brand"
+                  value={addProduct.brand}
+                  placeholder="Tomy"
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <div className="space-y-2">
+                <Label htmlFor="saleType">Sale Type</Label>
+                <Select
+                  id="saleType"
+                  value={addProduct.saleType}
+                  onValueChange={(value) =>
+                    handleSingleSelection("saleType", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a sale type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="HOT SALE">HOT SALE</SelectItem>
+                    <SelectItem value="NEW ARRIVALS">NEW ARRIVALS</SelectItem>
+                    <SelectItem value="LIMITED TIME OFFER">
+                      LIMITED TIME OFFER
+                    </SelectItem>
+                    <SelectItem value="FLASH SALE">FLASH SALE</SelectItem>
+                    <SelectItem value="CLEARANCE">CLEARANCE</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="stockLevel">Stock Levels</Label>
                 <Input
