@@ -83,6 +83,7 @@ const ProductCard = () => {
                 height={500}
                 alt=""
                 className="rounded-sm"
+                loading="lazy"
               />
             </Link>
           </CardContent>

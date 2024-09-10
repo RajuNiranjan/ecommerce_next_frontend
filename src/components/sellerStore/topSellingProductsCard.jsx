@@ -103,7 +103,8 @@ const TopSellingProductsCard = () => {
         <div className="flex justify-end items-end">
           <Button
             onClick={handleShowAddProduct}
-            className="flex justify-center items-center gap-2">
+            className="flex justify-center items-center gap-2"
+          >
             {showAddProduct ? (
               <>
                 <X size={22} /> CANCEL
@@ -121,7 +122,7 @@ const TopSellingProductsCard = () => {
             editProduct={editProduct}
           />
         ) : (
-          <Card>
+          <Card className="h-[650px] overflow-scroll">
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
                 PRODUCT DETAILS
@@ -141,6 +142,7 @@ const TopSellingProductsCard = () => {
                     <TableHead className="w-[50px]">ACTIONS</TableHead>
                   </TableRow>
                 </TableHeader>
+
                 <TableBody>
                   {loading ? (
                     Array.from({ length: 5 }).map((_, index) => (
@@ -185,6 +187,7 @@ const TopSellingProductsCard = () => {
                             width={50}
                             height={50}
                             className="object-cover"
+                            loading="lazy"
                           />
                         </TableCell>
                         <TableCell>{item.productName}</TableCell>
@@ -200,11 +203,13 @@ const TopSellingProductsCard = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                               <DropdownMenuItem
-                                onClick={() => handleEditProduct(item)}>
+                                onClick={() => handleEditProduct(item)}
+                              >
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleDeleteProduct(item._id)}>
+                                onClick={() => handleDeleteProduct(item._id)}
+                              >
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
