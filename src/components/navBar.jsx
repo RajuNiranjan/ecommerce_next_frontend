@@ -22,22 +22,90 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu";
 
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
 import { useToast } from "./ui/use-toast";
+
+const NavigationData = [
+  {
+    id: 1,
+    title: "SHIRT",
+    subItems: [
+      {
+        id: 11,
+        title: "FULL HANDS",
+        href: "/",
+      },
+      {
+        id: 12,
+        title: "HALF HANDS",
+        href: "/",
+      },
+      {
+        id: 13,
+        title: "3/4 HANDS",
+        href: "/",
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: "PANT",
+    subItems: [
+      {
+        id: 31,
+        title: "JEANS",
+        href: "/",
+      },
+      {
+        id: 32,
+        title: "COTTON",
+        href: "/",
+      },
+      {
+        id: 33,
+        title: "3/4 HANDS",
+        href: "/",
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: "T-SHIRT",
+    subItems: [
+      {
+        id: 21,
+        title: "FULL HANDS",
+        href: "/",
+      },
+      {
+        id: 22,
+        title: "HALF HANDS",
+        href: "/",
+      },
+      {
+        id: 23,
+        title: "3/4 HANDS",
+        href: "/",
+      },
+    ],
+  },
+];
 
 const NavBar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -57,11 +125,34 @@ const NavBar = () => {
       <div>
         <Link
           href="/"
-          className="hover:text-red-500 transition-all duration-100">
+          className="hover:text-red-500 transition-all duration-100"
+        >
           LOGO
         </Link>
       </div>
-      <div></div>
+      <div className="hidden md:block">
+        <NavigationMenu>
+          <NavigationMenuList>
+            {NavigationData.map((item, index) => (
+              <NavigationMenuItem key={index}>
+                <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  {item.subItems.map((items, index) => (
+                    <div key={index} className="w-[200px] flex flex-col gap-2">
+                      <Link
+                        href={items.href}
+                        className="hover:bg-blue-50 transition-all duration-300 p-2"
+                      >
+                        <NavigationMenuLink>{items.title}</NavigationMenuLink>
+                      </Link>
+                    </div>
+                  ))}
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
       <div>
         {/* WEB MENU */}
         <div className=" hidden md:flex gap-4 items-center">
@@ -69,14 +160,16 @@ const NavBar = () => {
             href="/wishlist"
             className={`${
               pathName === "/wishlist" && "text-red-500 "
-            } transition-all duration-100`}>
+            } transition-all duration-100`}
+          >
             <Heart />
           </Link>
           <Link
             href="/viewcart"
             className={`${
               pathName === "/viewcart" && "text-red-500 "
-            } transition-all duration-100`}>
+            } transition-all duration-100`}
+          >
             <ShoppingBag />
           </Link>
 
@@ -96,7 +189,8 @@ const NavBar = () => {
                 <DropdownMenuItem>Team</DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleLogOutAccount}
-                  className="flex justify-between items-center">
+                  className="flex justify-between items-center"
+                >
                   Log Out <LogOut size={16} />
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -104,7 +198,8 @@ const NavBar = () => {
           ) : (
             <Link
               href={pathName === "/login" ? "/register" : "/login"}
-              className="transition-all duration-500">
+              className="transition-all duration-500"
+            >
               <Button className="transition-all duration-500">
                 {pathName === "/login" ? "REGISTER" : "LOGIN"}
               </Button>
@@ -121,22 +216,26 @@ const NavBar = () => {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="flex flex-col justify-between  h-full">
+                className="flex flex-col justify-between  h-full"
+              >
                 <SheetHeader>
                   <SheetTitle>{user.userName}</SheetTitle>
                   <Link
                     href="/profile"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
+                  >
                     PROFILE
                   </Link>
                   <Link
                     href="/wishlist"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
+                  >
                     WISH LIST
                   </Link>
                   <Link
                     href="/viewcart"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
+                  >
                     CART
                   </Link>
                 </SheetHeader>
@@ -145,7 +244,8 @@ const NavBar = () => {
           ) : (
             <Link
               href={pathName === "/login" ? "/register" : "/login"}
-              className="transition-all duration-500">
+              className="transition-all duration-500"
+            >
               <Button className="transition-all duration-500">
                 {pathName === "/login" ? "REGISTER" : "LOGIN"}
               </Button>

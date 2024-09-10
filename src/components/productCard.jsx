@@ -40,9 +40,12 @@ const ProductCard = () => {
           key={products._id}
           className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out"
         >
-          <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
-            {products.saleType}
-          </Badge>
+          {products.saleType && (
+            <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
+              {products.saleType}
+            </Badge>
+          )}
+
           <div className="absolute top-2 right-2 ">
             {heart ? (
               <svg
