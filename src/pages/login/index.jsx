@@ -85,16 +85,15 @@ const LogIn = () => {
   };
 
   return (
-    <div className="flex justify-center items-center">
-      <Card className="w-[450px]">
+    <div className="flex justify-center items-center bg-[url('http://res.cloudinary.com/dlgewrscf/image/upload/v1726078618/yyr8v6cqzx9uc1lwcnii.webp')] bg-cover bg-center h-screen ">
+      <Card className="w-[450px] backdrop-blur-lg  bg-white/30">
         <CardHeader className="text-center text-4xl font-bold">
           Log In
         </CardHeader>
         <CardContent>
           <form
             onSubmit={handleSubmitLogInForm}
-            className="flex flex-col gap-4"
-          >
+            className="flex flex-col gap-4">
             <div>
               <Label htmlFor="email">Email</Label>
               <Input

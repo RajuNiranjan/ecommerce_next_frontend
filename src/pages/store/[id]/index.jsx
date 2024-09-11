@@ -53,7 +53,7 @@ const StoreHome = () => {
   }, [id, API_URI, TOKEN, dispatch]);
 
   return (
-    <div>
+    <div className="p-4">
       <Tabs defaultValue="orders">
         <TabsList className="w-max ">
           <TabsTrigger value="orders">ORDERS</TabsTrigger>

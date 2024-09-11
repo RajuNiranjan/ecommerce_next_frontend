@@ -147,7 +147,7 @@ const SingleProduct = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 space-x-2 ">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 space-x-2 ">
       {/* LEFT CONTAINER */}
       <div className="flex justify-center items-center">
         <div className="relative rounded-sm overflow-hidden ">

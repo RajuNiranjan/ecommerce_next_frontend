@@ -115,7 +115,7 @@ const WishListCard = () => {
         : wishListItems.map((wishListItem, index) => (
             <Card
               key={index}
-              className="w-full overflow-hidden h-full flex flex-col justify-between md:gap-4 hover:shadow-xl transition-all duration-300 relative">
+              className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out">
               {wishListItem.saleType && (
                 <Badge
                   className={`${
@@ -152,7 +152,7 @@ const WishListCard = () => {
                   </svg>
                 )}
               </div>
-              <CardContent className="p-0 h-[70%]">
+              <CardContent className="p-0  h-[70%]">
                 <Link href={`/products/${wishListItem._id}`}>
                   <Image
                     src={wishListItem.images[0]}
@@ -163,7 +163,7 @@ const WishListCard = () => {
                   />
                 </Link>
               </CardContent>
-              <CardFooter className="p-2 my-2 h-[30%] w-full flex justify-center flex-col items-start">
+              <CardFooter className="p-2 my-2  h-[30%]  w-full flex justify-center flex-col items-start">
                 <Link
                   href={`/products/${wishListItem._id}`}
                   className="transition-all duration-200 hover:text-red-500">

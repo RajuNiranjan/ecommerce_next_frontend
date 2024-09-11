@@ -85,15 +85,15 @@ const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center ">
-      <Card className="w-[450px]">
-        <CardHeader className="text-center text-4xl font-bold">
+    <div className="flex justify-center items-center bg-[url('http://res.cloudinary.com/dlgewrscf/image/upload/v1726078634/tgejfdkb2b5mkltiqfku.webp')] bg-cover bg-center h-screen ">
+      <Card className="w-[450px] backdrop-blur-lg bg-white/30 ">
+        <CardHeader className="text-center  text-4xl font-bold">
           Register
         </CardHeader>
         <CardContent>
           <form
             onSubmit={handleSubmitRegisterForm}
-            className="flex flex-col gap-4">
+            className="flex flex-col gap-4 ">
             <div>
               <Label htmlFor="userName">User Name</Label>
               <Input

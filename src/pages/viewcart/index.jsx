@@ -26,7 +26,7 @@ const ViewCart = () => {
   }, [user, router]);
 
   return (
-    <div className="flex flex-wrap gap-2 w-full">
+    <div className="p-4 flex flex-wrap gap-2 w-full">
       <div className="md:w-[70%] w-full gap-2 grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 ">
         <ViewCartProductCard />
         <ViewCartProductCard />
