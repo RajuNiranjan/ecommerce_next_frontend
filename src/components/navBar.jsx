@@ -40,6 +40,7 @@ import {
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
 import { useToast } from "./ui/use-toast";
+import { Badge } from "./ui/badge";
 
 const NavigationData = [
   {
@@ -112,6 +113,7 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const pathName = usePathname();
   const { toast } = useToast();
+  const { wishListItems } = useSelector((state) => state.wishList);
 
   const handleLogOutAccount = () => {
     localStorage.clear();
@@ -160,17 +162,28 @@ const NavBar = () => {
             href="/wishlist"
             className={`${
               pathName === "/wishlist" && "text-red-500 "
-            } transition-all duration-100`}
+            } transition-all duration-100 `}
           >
-            <Heart />
+            <div className="">
+              <Heart className="absolute" />
+              <p className="relative -top-4 -right-2 bg-red-500 h-7 w-7 flex justify-center items-center text-white rounded-full">
+                {wishListItems.length}
+              </p>
+            </div>
           </Link>
+
           <Link
             href="/viewcart"
             className={`${
               pathName === "/viewcart" && "text-red-500 "
             } transition-all duration-100`}
           >
-            <ShoppingBag />
+            <div className="">
+              <ShoppingBag className="absolute" />
+              <p className="relative -top-4 -right-2 bg-red-500 h-7 w-7 flex justify-center items-center text-white rounded-full">
+                {wishListItems.length}
+              </p>
+            </div>
           </Link>
 
           {user ? (

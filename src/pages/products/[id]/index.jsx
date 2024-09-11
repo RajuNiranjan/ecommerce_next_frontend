@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Carousel,
   CarouselContent,
@@ -16,20 +16,30 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  wishListFailure,
+  wishListStart,
+  wishListSuccess,
+  wishListData,
+} from "@/store/actions/wishList.slice";
 
 const SingleProduct = () => {
   const router = useRouter();
   const { id } = router.query;
   const { API_URI } = ENV_VAR;
-  const [heart, setHeart] = useState(false);
+  const [heart, setHeart] = useState(false); // Manage heart icon state
+  const dispatch = useDispatch();
+  const TOKEN =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
+  const { wishListItems } = useSelector((state) => state.wishList); // Get wishlist items from Redux store
   const [productData, setProductData] = useState({});
   const offer =
     ((productData.price - productData.offerPrice) / productData.price) * 100;
-  Math.round(offer);
   const roundedOffer = Math.round(offer);
 
+  // Fetch single product details
   useEffect(() => {
     const fetchSingeProduct = async () => {
       try {
@@ -47,25 +57,84 @@ const SingleProduct = () => {
     fetchSingeProduct();
   }, [API_URI, id]);
 
-  const handleAdd = () => {
-    if (user) {
-      setHeart(!heart);
-      if (heart) {
+  // Fetch wishlist items for the user
+  const fetchWishList = async () => {
+    dispatch(wishListStart());
+    try {
+      const res = await axios.get(`${API_URI}/api/wishlist/${user._id}`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      dispatch(wishListData(res.data.wishList));
+    } catch (error) {
+      console.log(error);
+      dispatch(wishListFailure(error));
+    }
+  };
+
+  // Fetch wishlist when user and token are available
+  useEffect(() => {
+    if (user && TOKEN) {
+      fetchWishList();
+    }
+  }, [API_URI, dispatch, TOKEN, user]);
+
+  // Helper function to check if the product is already in the wishlist
+  const isInWishlist = (productId) => {
+    return wishListItems.some((item) => item._id === productId);
+  };
+
+  // Handle adding or removing from wishlist
+  const handleAddOrRemoveWishList = async (productId) => {
+    if (!user) {
+      toast({
+        title: "Please login to modify your wishlist",
+        duration: 1000,
+      });
+      return;
+    }
+    dispatch(wishListStart());
+    try {
+      let res;
+      if (isInWishlist(productId)) {
+        // Remove from wishlist
+        res = await axios.delete(
+          `${API_URI}/api/wishlist/${user._id}/remove/${productId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
         toast({
-          title: "Item Removed from Wish list",
+          title: "Removed from wishlist",
           duration: 1000,
         });
       } else {
+        // Add to wishlist
+        res = await axios.post(
+          `${API_URI}/api/wishList`,
+          {
+            userId: user._id,
+            productId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
         toast({
-          title: "Item Added to Wish list",
+          title: "Added to wishlist",
           duration: 1000,
         });
       }
-    } else {
-      toast({
-        title: "Please login",
-        duration: 1000,
-      });
+      dispatch(wishListSuccess(res.data.wishList));
+      fetchWishList(); // Refetch wishlist to update UI
+    } catch (error) {
+      console.error(error);
+      dispatch(wishListFailure(error));
     }
   };
 
@@ -96,24 +165,26 @@ const SingleProduct = () => {
             {productData?.saleType}
           </Badge>
           <div className="absolute top-5 right-5 ">
-            {heart ? (
+            {isInWishlist(productData._id) ? (
               <svg
-                onClick={handleAdd}
-                xmlns="http://www.w3.org/1000/svg"
+                onClick={() => handleAddOrRemoveWishList(productData._id)}
+                xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8 text-red-500 cursor-pointer">
+                className="size-8 text-red-500 cursor-pointer"
+              >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
               <svg
-                onClick={handleAdd}
-                xmlns="http://www.w3.org/1000/svg"
+                onClick={() => handleAddOrRemoveWishList(productData._id)}
+                xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-8 text-white cursor-pointer">
+                className="size-8 text-white cursor-pointer"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -125,7 +196,7 @@ const SingleProduct = () => {
         </div>
       </div>
       {/* RIGHT CONTAINER */}
-      <div className=" flex flex-col  gap-4 ">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-semibold  cursor-default">
             {productData?.categories}
@@ -161,7 +232,8 @@ const SingleProduct = () => {
             {productData?.size?.map((size, index) => (
               <Button
                 key={index}
-                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center ">
+                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center "
+              >
                 {size}
               </Button>
             ))}
@@ -174,12 +246,30 @@ const SingleProduct = () => {
               ADD TO BAG
             </Button>
           </Link>
-          <Link href="/wishlist" className="w-full">
-            <Button className="w-full bg-transparent text-black border hover:bg-transparent flex items-center gap-1">
-              <Heart size={15} />
-              WISHLIST
-            </Button>
-          </Link>
+
+          <Button
+            onClick={() => handleAddOrRemoveWishList(productData._id)}
+            className={`w-full bg-transparent   ${
+              isInWishlist(productData._id)
+                ? "bg-black text-white"
+                : "text-black"
+            } border hover:text-white transition-all duration-500 flex items-center gap-1`}
+          >
+            {isInWishlist(productData._id) ? (
+              <svg
+                onClick={() => handleAddOrRemoveWishList(productData._id)}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-5 text-red-500 cursor-pointer"
+              >
+                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+              </svg>
+            ) : (
+              <Heart size={16} />
+            )}
+            WISHLIST
+          </Button>
         </div>
       </div>
     </div>

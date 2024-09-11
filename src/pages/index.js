@@ -18,7 +18,6 @@ const Home = () => {
       try {
         const res = await axios.get(`${API_URI}/api/product`)
         const data = res.data
-        console.log("data", data);
         dispatch(allProductSuccess(data.products))
       } catch (error) {
         console.log(error);
