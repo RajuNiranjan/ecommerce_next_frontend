@@ -103,8 +103,7 @@ const TopSellingProductsCard = () => {
         <div className="flex justify-end items-end">
           <Button
             onClick={handleShowAddProduct}
-            className="flex justify-center items-center gap-2"
-          >
+            className="flex justify-center items-center gap-2">
             {showAddProduct ? (
               <>
                 <X size={22} /> CANCEL
@@ -203,13 +202,11 @@ const TopSellingProductsCard = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent>
                               <DropdownMenuItem
-                                onClick={() => handleEditProduct(item)}
-                              >
+                                onClick={() => handleEditProduct(item)}>
                                 Edit
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleDeleteProduct(item._id)}
-                              >
+                                onClick={() => handleDeleteProduct(item._id)}>
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>

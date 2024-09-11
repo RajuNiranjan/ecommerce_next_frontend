@@ -19,7 +19,7 @@ const saleTypeColors = {
   "NEW ARRIVALS": "bg-blue-500",
   "LIMITED TIME OFFER": "bg-yellow-500",
   "FLASH SALE": "bg-orange-500",
-  "CLEARANCE": "bg-purple-500",
+  CLEARANCE: "bg-purple-500",
 };
 
 const ProductCard = () => {

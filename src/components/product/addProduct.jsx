@@ -206,6 +206,7 @@ const AddProduct = ({ setShowAddProduct, editProduct }) => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="tshirt">T-SHIRT</SelectItem>
+                    <SelectItem value="hoddie">HODDIE</SelectItem>
                     <SelectItem value="shirt">SHIRT</SelectItem>
                     <SelectItem value="pant">PANT</SelectItem>
                   </SelectContent>
