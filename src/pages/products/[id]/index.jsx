@@ -23,6 +23,14 @@ import {
   wishListData,
 } from "@/store/actions/wishList.slice";
 
+const saleTypeColors = {
+  "HOT SALE": "bg-red-500",
+  "NEW ARRIVALS": "bg-blue-500",
+  "LIMITED TIME OFFER": "bg-yellow-500",
+  "FLASH SALE": "bg-orange-500",
+  CLEARANCE: "bg-purple-500",
+};
+
 const SingleProduct = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -162,7 +170,10 @@ const SingleProduct = () => {
             <CarouselNext />
           </Carousel>
           {productData.saleType !== "NONE" && (
-            <Badge className="absolute rounded-l bg-yellow-500 top-0 left-0">
+            <Badge
+              className={`${
+                saleTypeColors[productData.saleType]
+              } rounded-l absolute top-0 left-0 tracking-widest`}>
               {productData?.saleType}
             </Badge>
           )}
