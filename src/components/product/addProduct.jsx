@@ -194,6 +194,7 @@ const AddProduct = ({ setShowAddProduct, editProduct }) => {
                 <Label htmlFor="categories">Product Category</Label>
                 <Select
                   id="categories"
+                  value={addProduct.categories}
                   onValueChange={(value) =>
                     setAddProduct((prevState) => ({
                       ...prevState,
@@ -415,6 +416,7 @@ const AddProduct = ({ setShowAddProduct, editProduct }) => {
                     <SelectValue placeholder="Select a sale type" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="NONE">NONE</SelectItem>
                     <SelectItem value="HOT SALE">HOT SALE</SelectItem>
                     <SelectItem value="NEW ARRIVALS">NEW ARRIVALS</SelectItem>
                     <SelectItem value="LIMITED TIME OFFER">

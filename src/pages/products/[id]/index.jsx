@@ -161,9 +161,12 @@ const SingleProduct = () => {
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
-          <Badge className="absolute rounded-l bg-yellow-500 top-0 left-0">
-            {productData?.saleType}
-          </Badge>
+          {productData.saleType !== "NONE" && (
+            <Badge className="absolute rounded-l bg-yellow-500 top-0 left-0">
+              {productData?.saleType}
+            </Badge>
+          )}
+
           <div className="absolute top-5 right-5 ">
             {isInWishlist(productData._id) ? (
               <svg
@@ -171,8 +174,7 @@ const SingleProduct = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8 text-red-500 cursor-pointer"
-              >
+                className="size-8 text-red-500 cursor-pointer">
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -183,8 +185,7 @@ const SingleProduct = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-8 text-white cursor-pointer"
-              >
+                className="size-8 text-white cursor-pointer">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -232,8 +233,7 @@ const SingleProduct = () => {
             {productData?.size?.map((size, index) => (
               <Button
                 key={index}
-                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center "
-              >
+                className="h-7 uppercase w-7 border bg-transparent text-black hover:bg-red-500 hover:text-white  transition-all duration-300 rounded-sm flex justify-center items-center ">
                 {size}
               </Button>
             ))}
@@ -253,16 +253,14 @@ const SingleProduct = () => {
               isInWishlist(productData._id)
                 ? "bg-black text-white"
                 : "text-black"
-            } border hover:text-white transition-all duration-500 flex items-center gap-1`}
-          >
+            } border hover:text-white transition-all duration-500 flex items-center gap-1`}>
             {isInWishlist(productData._id) ? (
               <svg
                 onClick={() => handleAddOrRemoveWishList(productData._id)}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-5 text-red-500 cursor-pointer"
-              >
+                className="size-5 text-red-500 cursor-pointer">
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -270,6 +268,11 @@ const SingleProduct = () => {
             )}
             WISHLIST
           </Button>
+        </div>
+        <div>
+          <h1>
+            <b>Description:</b> {productData.description}
+          </h1>
         </div>
       </div>
     </div>
