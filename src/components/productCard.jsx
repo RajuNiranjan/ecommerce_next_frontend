@@ -1,66 +1,135 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "./ui/badge";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "./ui/use-toast";
+import {
+  wishListFailure,
+  wishListStart,
+  wishListSuccess,
+  wishListData,
+} from "@/store/actions/wishList.slice";
+import axios from "axios";
+import { ENV_VAR } from "@/config/envVar";
 
 const ProductCard = () => {
-  const { loading, allProducts } = useSelector((state) => state.products);
-
-  const [heart, setHeart] = useState(false);
+  const { allProducts } = useSelector((state) => state.products);
+  const { wishListItems } = useSelector((state) => state.wishList);
+  const dispatch = useDispatch();
+  const { API_URI } = ENV_VAR;
+  const TOKEN =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
-  const handleAdd = () => {
-    if (user) {
-      setHeart(!heart);
-      if (heart === true) {
+
+  // Function to fetch wishlist items
+  const fetchWishList = async () => {
+    dispatch(wishListStart());
+    try {
+      const res = await axios.get(`${API_URI}/api/wishlist/${user._id}`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      dispatch(wishListData(res.data.wishList));
+    } catch (error) {
+      console.log(error);
+      dispatch(wishListFailure(error));
+    }
+  };
+
+  useEffect(() => {
+    if (user && TOKEN) {
+      fetchWishList();
+    }
+  }, [API_URI, dispatch, TOKEN, user]);
+
+  // Helper function to check if a product is in the wishlist
+  const isInWishlist = (productId) => {
+    return wishListItems.some((item) => item._id === productId);
+  };
+
+  const handleAddOrRemoveWishList = async (id) => {
+    if (!user) {
+      toast({
+        title: "Please login to modify your wishlist",
+        duration: 1000,
+      });
+      return;
+    }
+    dispatch(wishListStart());
+    try {
+      let res;
+      if (isInWishlist(id)) {
+        // Remove from wishlist
+        res = await axios.delete(
+          `${API_URI}/api/wishlist/${user._id}/remove/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
         toast({
-          title: "Item Removed from Wish list",
+          title: "Removed from wishlist",
           duration: 1000,
         });
       } else {
+        // Add to wishlist
+        res = await axios.post(
+          `${API_URI}/api/wishList`,
+          {
+            userId: user._id,
+            productId: id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
         toast({
-          title: "Item Added from Wish list",
+          title: "Added to wishlist",
           duration: 1000,
         });
       }
-    } else
-      toast({
-        title: "please login",
-        duration: 1000,
-      });
+      dispatch(wishListSuccess(res.data.wishList));
+      fetchWishList(); // Refetch wishlist to update UI
+    } catch (error) {
+      console.error(error);
+      dispatch(wishListFailure(error));
+    }
   };
 
   return (
     <>
-      {allProducts.map((products, index) => (
+      {allProducts.map((product) => (
         <Card
-          key={products._id}
+          key={product._id}
           className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out"
         >
-          {products.saleType && (
-            <Badge className="bg-green-500 rounded-l  absolute top-0 left-0 tracking-widest  ">
-              {products.saleType}
+          {product.saleType && (
+            <Badge className="bg-green-500 rounded-l absolute top-0 left-0 tracking-widest">
+              {product.saleType}
             </Badge>
           )}
-
-          <div className="absolute top-2 right-2 ">
-            {heart ? (
+          <div className="absolute top-2 right-2">
+            {isInWishlist(product._id) ? (
               <svg
-                onClick={handleAdd}
-                xmlns="http://www.w3.org/1000/svg"
+                onClick={() => handleAddOrRemoveWishList(product._id)}
+                xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-5  text-red-500 cursor-pointer"
+                className="size-5 text-red-500 cursor-pointer"
               >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
               <svg
-                onClick={handleAdd}
-                xmlns="http://www.w3.org/1000/svg"
+                onClick={() => handleAddOrRemoveWishList(product._id)}
+                xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
@@ -75,40 +144,40 @@ const ProductCard = () => {
               </svg>
             )}
           </div>
-          <CardContent className="p-0 h-[70%]  ">
-            <Link href={`products/${products._id}`}>
+          <CardContent className="p-0 h-[70%]">
+            <Link href={`products/${product._id}`}>
               <Image
-                src={products.images[0]}
+                src={product.images[0]}
                 width={500}
                 height={500}
-                alt=""
+                alt={product.productName}
                 className="rounded-sm"
                 loading="lazy"
               />
             </Link>
           </CardContent>
-          <CardFooter className="p-2 my-2 h-[30%] w-full flex justify-center  flex-col items-start">
+          <CardFooter className="p-2 my-2 h-[30%] w-full flex justify-center flex-col items-start">
             <Link
-              href={`/products/${products._id}`}
+              href={`/products/${product._id}`}
               className="transition-all duration-200 hover:text-red-500"
             >
-              <h1 className="text-md font-medium ">{products.productName}</h1>
+              <h1 className="text-md font-medium">{product.productName}</h1>
             </Link>
-            <div className="flex justify-between  w-full ">
-              <div className="flex flex-col gap-1 ">
+            <div className="flex justify-between w-full">
+              <div className="flex flex-col gap-1">
                 <p className="text-xs md:text-sm">
-                  <span>Fabric:</span> <span>cotton</span>
+                  <span>Fabric:</span> <span>{product.fabric}</span>
                 </p>
                 <p className="text-xs md:text-sm">
-                  <span>Brand:</span> <span>Tomy Finland</span>
+                  <span>Brand:</span> <span>{product.brand}</span>
                 </p>
               </div>
               <div className="flex flex-col items-end">
                 <h1 className="text-sm md:text-lg text-green-500 font-medium">
-                  ₹ {products.price}
+                  ₹ {product.price}
                 </h1>
                 <small className="text-xs line-through text-slate-500">
-                  ₹ {products.offerPrice}
+                  ₹ {product.offerPrice}
                 </small>
               </div>
             </div>
