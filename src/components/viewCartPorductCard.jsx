@@ -6,7 +6,12 @@ import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
 import { ENV_VAR } from "@/config/envVar";
 import { useDispatch, useSelector } from "react-redux";
-import { cartData, cartFailure, cartStart } from "@/store/actions/cart.slice";
+import {
+  cartData,
+  cartFailure,
+  cartStart,
+  cartSuccess,
+} from "@/store/actions/cart.slice";
 import axios from "axios";
 
 const ViewCartProductCard = () => {
@@ -41,6 +46,26 @@ const ViewCartProductCard = () => {
     }
   }, [API_URI, dispatch, TOKEN, user]);
 
+  const handleRemoveFromCart = async (id) => {
+    dispatch(cartStart());
+
+    try {
+      const res = await axios.delete(
+        `${API_URI}/api/cart/${user._id}/remove/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
+      dispatch(cartSuccess());
+      fetchCartData();
+    } catch (error) {
+      console.log(error);
+      dispatch(cartFailure());
+    }
+  };
+
   const getContrastColor = (backgroundColor) => {
     const hex = backgroundColor.replace("#", "");
     const r = parseInt(hex.substring(0, 2), 16);
@@ -55,7 +80,9 @@ const ViewCartProductCard = () => {
     <>
       {cartItems.map((cart, index) => (
         <Card key={index} className="h-max w-full sm:h-[200px] relative">
-          <Badge className="absolute cursor-pointer -right-2  -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200 ">
+          <Badge
+            onClick={() => handleRemoveFromCart(cart.product._id)}
+            className="absolute cursor-pointer -right-2  -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200 ">
             <X size={12} />
           </Badge>
           <CardContent key={index} className="h-full p-2  ">
