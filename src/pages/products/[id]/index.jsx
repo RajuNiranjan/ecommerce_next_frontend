@@ -23,6 +23,7 @@ import {
   wishListData,
 } from "@/store/actions/wishList.slice";
 import {
+  cartData,
   cartFailure,
   cartStart,
   cartSuccess,
@@ -46,6 +47,7 @@ const SingleProduct = () => {
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const { wishListItems } = useSelector((state) => state.wishList);
+  const { cartItems } = useSelector((state) => state.cart);
   const [productData, setProductData] = useState({});
 
   const [singleProductData, setSingleProductData] = useState({
@@ -58,22 +60,19 @@ const SingleProduct = () => {
     ((productData.price - productData.offerPrice) / productData.price) * 100;
   const roundedOffer = Math.round(offer);
 
-  useEffect(() => {
-    const fetchSingeProduct = async () => {
-      try {
-        if (id) {
-          const res = await axios.get(
-            `${API_URI}/api/product/singel_product/${id}`
-          );
-          const data = res.data;
-          setProductData(data.product);
-        }
-      } catch (error) {
-        console.log(error);
+  const fetchSingeProduct = async () => {
+    try {
+      if (id) {
+        const res = await axios.get(
+          `${API_URI}/api/product/singel_product/${id}`
+        );
+        const data = res.data;
+        setProductData(data.product);
       }
-    };
-    fetchSingeProduct();
-  }, [API_URI, id]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const fetchWishList = async () => {
     dispatch(wishListStart());
@@ -90,14 +89,36 @@ const SingleProduct = () => {
     }
   };
 
+  const fetchCartData = async () => {
+    dispatch(cartStart());
+    try {
+      const res = await axios.get(`${API_URI}/api/cart/${user._id}`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      const data = res.data;
+      dispatch(cartData(data.cartItems));
+    } catch (error) {
+      console.log(error);
+      dispatch(cartFailure(error));
+    }
+  };
+
   useEffect(() => {
+    fetchSingeProduct();
     if (user && TOKEN) {
       fetchWishList();
+      fetchCartData();
     }
-  }, [API_URI, dispatch, TOKEN, user]);
+  }, [API_URI, dispatch, TOKEN, user, id]);
 
   const isInWishlist = (productId) => {
     return wishListItems.some((item) => item._id === productId);
+  };
+
+  const isInCart = (productId) => {
+    return cartItems.some((item) => item._id === productId);
   };
 
   const handleAddOrRemoveWishList = async (productId) => {
@@ -112,7 +133,6 @@ const SingleProduct = () => {
     try {
       let res;
       if (isInWishlist(productId)) {
-        // Remove from wishlist
         res = await axios.delete(
           `${API_URI}/api/wishlist/${user._id}/remove/${productId}`,
           {
@@ -126,7 +146,6 @@ const SingleProduct = () => {
           duration: 1000,
         });
       } else {
-        // Add to wishlist
         res = await axios.post(
           `${API_URI}/api/wishList`,
           {
@@ -162,13 +181,17 @@ const SingleProduct = () => {
     return luminance > 0.5 ? "black" : "white";
   };
 
-  // Handle form submission
-  const handleAddToCart = async (event, id) => {
-    event.preventDefault(); // Prevent the default form submission behavior
-
+  const handleAddOrRemoveToCart = async (e, productId) => {
+    e.preventDefault();
+    if (!user) {
+      toast({
+        title: "Please login to modify your wishlist",
+        duration: 1000,
+      });
+      return;
+    }
     const { size, color, quantity } = singleProductData;
 
-    // Validate form fields
     if (!size) {
       toast({
         title: "Please select a size",
@@ -194,23 +217,46 @@ const SingleProduct = () => {
     }
     dispatch(cartStart());
     try {
-      const res = await axios.post(
-        `${API_URI}/api/cart`,
-        {
-          userId: user._id,
-          productId: id,
-          size,
-          color,
-          quantity,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
+      const userId = user?._id;
+      console.log("userid", userId);
+
+      let res;
+      if (isInCart(productId)) {
+        res = await axios.delete(
+          `${API_URI}/api/cart/${user._id}/remove/${productId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
+        toast({
+          title: "Removed from cart",
+          duration: 1000,
+        });
+      } else {
+        res = await axios.post(
+          `${API_URI}/api/cart`,
+          {
+            userId: user?._id,
+            productId: productId,
+            size,
+            color,
+            quantity,
           },
-        }
-      );
-      console.log(res.data);
+          {
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+            },
+          }
+        );
+        toast({
+          title: "Added to cart",
+          duration: 1000,
+        });
+      }
       dispatch(cartSuccess());
+      fetchCartData();
     } catch (error) {
       console.log(error);
       dispatch(cartFailure());
@@ -244,8 +290,7 @@ const SingleProduct = () => {
             <Badge
               className={`${
                 saleTypeColors[productData.saleType]
-              } rounded-l absolute top-0 left-0 tracking-widest`}
-            >
+              } rounded-l absolute top-0 left-0 tracking-widest`}>
               {productData?.saleType}
             </Badge>
           )}
@@ -257,8 +302,7 @@ const SingleProduct = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8 text-red-500 cursor-pointer"
-              >
+                className="size-8 text-red-500 cursor-pointer">
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -269,8 +313,7 @@ const SingleProduct = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-8 text-white cursor-pointer"
-              >
+                className="size-8 text-white cursor-pointer">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -315,7 +358,7 @@ const SingleProduct = () => {
 
         <form
           className="space-y-4"
-          onSubmit={(e) => handleAddToCart(e, productData._id)} // Pass event and product ID
+          onSubmit={(e) => handleAddOrRemoveToCart(e, productData._id)} // Pass event and product ID
         >
           {/* Size Selector */}
           <div className="flex flex-col gap-2">
@@ -332,8 +375,7 @@ const SingleProduct = () => {
                     value={size}
                     onClick={() =>
                       setSingleProductData({ ...singleProductData, size: size })
-                    }
-                  >
+                    }>
                     {size}
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -358,8 +400,7 @@ const SingleProduct = () => {
                     value={color}
                     onClick={() =>
                       setSingleProductData({ ...singleProductData, color })
-                    }
-                  ></ToggleGroupItem>
+                    }></ToggleGroupItem>
                 </ToggleGroup>
               ))}
             </div>
@@ -374,8 +415,7 @@ const SingleProduct = () => {
                   ...singleProductData,
                   quantity: Math.max(1, singleProductData.quantity - 1),
                 })
-              }
-            >
+              }>
               -
             </Button>
             <h1 className="text-2xl">{singleProductData.quantity}</h1>
@@ -386,8 +426,7 @@ const SingleProduct = () => {
                   ...singleProductData,
                   quantity: singleProductData.quantity + 1,
                 })
-              }
-            >
+              }>
               +
             </Button>
           </div>
@@ -396,8 +435,7 @@ const SingleProduct = () => {
           <div className="flex gap-4 w-full flex-col md:flex-row">
             <Button
               className="bg-red-500 hover:bg-red-600 w-full flex gap-1 hover:-translate-y-2 ease-in-out transition-all duration-500"
-              type="submit"
-            >
+              type="submit">
               <ShoppingBag size={16} />
               ADD TO BAG
             </Button>
@@ -408,15 +446,13 @@ const SingleProduct = () => {
                 isInWishlist(productData._id)
                   ? "bg-black text-white"
                   : "text-black"
-              } border hover:text-white transition-all duration-500 flex items-center gap-1 hover:-translate-y-2 ease-in-out`}
-            >
+              } border hover:text-white transition-all duration-500 flex items-center gap-1 hover:-translate-y-2 ease-in-out`}>
               {isInWishlist(productData._id) ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="size-5 text-red-500 cursor-pointer"
-                >
+                  className="size-5 text-red-500 cursor-pointer">
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg>
               ) : (

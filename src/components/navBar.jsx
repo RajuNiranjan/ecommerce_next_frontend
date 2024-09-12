@@ -40,7 +40,6 @@ import {
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
 import { useToast } from "./ui/use-toast";
-import { Badge } from "./ui/badge";
 
 const NavigationData = [
   {
@@ -114,6 +113,7 @@ const NavBar = () => {
   const pathName = usePathname();
   const { toast } = useToast();
   const { wishListItems } = useSelector((state) => state.wishList);
+  const { cartItems } = useSelector((state) => state.cart);
 
   const handleLogOutAccount = () => {
     localStorage.clear();
@@ -127,8 +127,7 @@ const NavBar = () => {
       <div>
         <Link
           href="/"
-          className="hover:text-red-500 transition-all duration-100"
-        >
+          className="hover:text-red-500 transition-all duration-100">
           LOGO
         </Link>
       </div>
@@ -143,8 +142,7 @@ const NavBar = () => {
                     <div key={index} className="w-[200px] flex flex-col gap-2">
                       <Link
                         href={items.href}
-                        className="hover:bg-blue-50 transition-all duration-300 p-2"
-                      >
+                        className="hover:bg-blue-50 transition-all duration-300 p-2">
                         <NavigationMenuLink>{items.title}</NavigationMenuLink>
                       </Link>
                     </div>
@@ -157,16 +155,16 @@ const NavBar = () => {
       </div>
       <div>
         {/* WEB MENU */}
-        <div className=" hidden md:flex gap-4 items-center justify-center">
+        <div className=" hidden md:flex gap-10 items-center justify-center">
           <Link
             href="/wishlist"
             className={`${
               pathName === "/wishlist" && "text-red-500 "
-            } transition-all duration-500 hover:-translate-y-2 ease-in-out`}
-          >
+            } transition-all duration-500 hover:-translate-y-2 ease-in-out`}>
             <div className="">
               <Heart className="absolute" />
-              <p className="relative -top-4 -right-2 bg-red-500 h-7 w-7 flex justify-center items-center text-white rounded-full">
+
+              <p className="relative -top-3 -right-2 bg-red-500 h-5 w-5 flex justify-center items-center text-white rounded-full text-xs">
                 {wishListItems.length}
               </p>
             </div>
@@ -176,12 +174,11 @@ const NavBar = () => {
             href="/viewcart"
             className={`${
               pathName === "/viewcart" && "text-red-500 "
-            } transition-all duration-500 hover:-translate-y-2 ease-in-out`}
-          >
+            } transition-all duration-500 hover:-translate-y-2 ease-in-out`}>
             <div className="">
               <ShoppingBag className="absolute" />
-              <p className="relative -top-4 -right-2 bg-red-500 h-7 w-7 flex justify-center items-center text-white rounded-full">
-                {wishListItems.length}
+              <p className="relative -top-3 -right-2 bg-red-500 h-5 w-5 flex justify-center items-center text-white rounded-full text-xs">
+                {cartItems.length}
               </p>
             </div>
           </Link>
@@ -203,8 +200,7 @@ const NavBar = () => {
                   <DropdownMenuItem>Team</DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={handleLogOutAccount}
-                    className="flex justify-between items-center"
-                  >
+                    className="flex justify-between items-center">
                     Log Out <LogOut size={16} />
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -212,8 +208,7 @@ const NavBar = () => {
             ) : (
               <Link
                 href={pathName === "/login" ? "/register" : "/login"}
-                className="transition-all duration-500"
-              >
+                className="transition-all duration-500">
                 <Button className="transition-all duration-500">
                   {pathName === "/login" ? "REGISTER" : "LOGIN"}
                 </Button>
@@ -231,26 +226,22 @@ const NavBar = () => {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="flex flex-col justify-between  h-full"
-              >
+                className="flex flex-col justify-between  h-full">
                 <SheetHeader>
                   <SheetTitle>{user.userName}</SheetTitle>
                   <Link
                     href="/profile"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
-                  >
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
                     PROFILE
                   </Link>
                   <Link
                     href="/wishlist"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
-                  >
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
                     WISH LIST
                   </Link>
                   <Link
                     href="/viewcart"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
-                  >
+                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
                     CART
                   </Link>
                 </SheetHeader>
@@ -259,8 +250,7 @@ const NavBar = () => {
           ) : (
             <Link
               href={pathName === "/login" ? "/register" : "/login"}
-              className="transition-all duration-500"
-            >
+              className="transition-all duration-500">
               <Button className="transition-all duration-500">
                 {pathName === "/login" ? "REGISTER" : "LOGIN"}
               </Button>

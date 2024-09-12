@@ -29,8 +29,6 @@ const ViewCart = () => {
     <div className="p-4 flex flex-wrap gap-2 w-full">
       <div className="md:w-[70%] w-full gap-2 grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 ">
         <ViewCartProductCard />
-        <ViewCartProductCard />
-        <ViewCartProductCard />
       </div>
       <div className="md:w-[28%] w-full ">
         <Card className="w-full sticky  top-20">
