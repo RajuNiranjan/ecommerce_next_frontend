@@ -4,6 +4,7 @@ import AddressReducer from "./actions/address.slice";
 import SellerReducer from "./actions/seller.slice";
 import ProductsReducer from './actions/product.slice'
 import WishListReducer from './actions/wishList.slice'
+import CartReducer from './actions/cart.slice'
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     address: AddressReducer,
     seller: SellerReducer,
     products: ProductsReducer,
-    wishList: WishListReducer
+    wishList: WishListReducer,
+    cart: CartReducer
   },
 });

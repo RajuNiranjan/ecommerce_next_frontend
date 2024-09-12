@@ -22,6 +22,11 @@ import {
   wishListSuccess,
   wishListData,
 } from "@/store/actions/wishList.slice";
+import {
+  cartFailure,
+  cartStart,
+  cartSuccess,
+} from "@/store/actions/cart.slice";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -158,8 +163,8 @@ const SingleProduct = () => {
   };
 
   // Handle form submission
-  const handleAddToCart = (e) => {
-    e.preventDefault();
+  const handleAddToCart = async (event, id) => {
+    event.preventDefault(); // Prevent the default form submission behavior
 
     const { size, color, quantity } = singleProductData;
 
@@ -187,11 +192,29 @@ const SingleProduct = () => {
       });
       return;
     }
-
-    // Log selected data to the console
-    console.log("Selected Size:", size);
-    console.log("Selected Color:", color);
-    console.log("Quantity:", quantity);
+    dispatch(cartStart());
+    try {
+      const res = await axios.post(
+        `${API_URI}/api/cart`,
+        {
+          userId: user._id,
+          productId: id,
+          size,
+          color,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        }
+      );
+      console.log(res.data);
+      dispatch(cartSuccess());
+    } catch (error) {
+      console.log(error);
+      dispatch(cartFailure());
+    }
   };
 
   return (
@@ -290,7 +313,10 @@ const SingleProduct = () => {
           </Badge>
         </div>
 
-        <form className="space-y-4" onSubmit={handleAddToCart}>
+        <form
+          className="space-y-4"
+          onSubmit={(e) => handleAddToCart(e, productData._id)} // Pass event and product ID
+        >
           {/* Size Selector */}
           <div className="flex flex-col gap-2">
             <h1 className="font-bold text-xl">Select Size</h1>
