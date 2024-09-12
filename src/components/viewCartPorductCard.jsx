@@ -119,10 +119,18 @@ const ViewCartProductCard = () => {
                       className="h-5 w-5 bg-red-500 rounded-full"
                     />
                   </p>
-                  <p>
-                    Fabric :{" "}
-                    <span className="font-semibold">{cart.product.fabric}</span>
-                  </p>
+                  <div className="flex flex-wrap gap-4 items-center">
+                    <small>
+                      Fabric :{" "}
+                      <span className="font-semibold">
+                        {cart.product.fabric}
+                      </span>
+                    </small>
+                    <small>
+                      Quantity :{" "}
+                      <span className="font-semibold">{cart.quantity}</span>
+                    </small>
+                  </div>
                   <div className="font-mono flex gap-2 items-center">
                     <span className="text-2xl font-semibold">
                       ₹{cart.product.price}
