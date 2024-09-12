@@ -32,7 +32,6 @@ import {
 import { useToast } from "../ui/use-toast";
 
 const AddProduct = ({ setShowAddProduct, editProduct }) => {
-  console.log("edit product data", editProduct);
   let productId = editProduct?._id;
   const { user } = useSelector((state) => state.auth);
   const { seller } = useSelector((state) => state.seller);
@@ -109,7 +108,6 @@ const AddProduct = ({ setShowAddProduct, editProduct }) => {
 
     const errors = [];
 
-    // Check each field individually
     if (!addProduct.productName) errors.push("Product Name is required");
     if (!addProduct.description) errors.push("Product Description is required");
     if (!addProduct.categories) errors.push("Product Category is required");
@@ -126,7 +124,6 @@ const AddProduct = ({ setShowAddProduct, editProduct }) => {
     if (!addProduct.userId) errors.push("User ID is required");
     if (!addProduct.storeId) errors.push("Store ID is required");
 
-    // If there are any errors, show them in a toast and return
     if (errors.length > 0) {
       toast({
         title: "Validation Error",

@@ -31,50 +31,42 @@ import {
 
 const TopSellingProductsCard = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
-  const [token, setToken] = useState("");
-  const [editProduct, setEditProduct] = useState(null); // State to hold the product being edited
+  const [editProduct, setEditProduct] = useState(null);
   const { id } = useParams();
   const { API_URI } = ENV_VAR;
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
-  const TOKEN = localStorage.getItem("token");
+  const TOKEN =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const handleShowAddProduct = () => {
     setShowAddProduct((prev) => !prev);
-    setEditProduct(null); // Reset edit product when opening AddProduct without editing
+    setEditProduct(null);
+  };
+
+  const fetchProducts = async () => {
+    dispatch(productStart());
+    try {
+      const { data } = await axios.get(`${API_URI}/api/product/${id}`, {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+        },
+      });
+      if (Array.isArray(data.products)) {
+        dispatch(productsSuccess(data.products));
+      } else {
+        throw new Error("Invalid data format");
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error.message || error);
+      dispatch(productsFailure(error));
+    }
   };
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    if (savedToken) {
-      setToken(savedToken);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!token || !id) return;
-
-    const fetchProducts = async () => {
-      dispatch(productStart());
-      try {
-        const { data } = await axios.get(`${API_URI}/api/product/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (Array.isArray(data.products)) {
-          dispatch(productsSuccess(data.products));
-        } else {
-          throw new Error("Invalid data format");
-        }
-      } catch (error) {
-        console.error("Error fetching product:", error.message || error);
-        dispatch(productsFailure(error));
-      }
-    };
-
+    if (!TOKEN || !id) return;
     fetchProducts();
-  }, [token, API_URI, dispatch, id]);
+  }, [, API_URI, dispatch, TOKEN, id]);
 
   const handleDeleteProduct = async (id) => {
     dispatch(productStart());
@@ -86,6 +78,7 @@ const TopSellingProductsCard = () => {
       });
       const data = res.data;
       dispatch(productsSuccess(data.products));
+      fetchProducts();
     } catch (error) {
       console.log(error);
       dispatch(productsFailure(error));

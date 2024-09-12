@@ -28,6 +28,11 @@ import {
   cartStart,
   cartSuccess,
 } from "@/store/actions/cart.slice";
+import {
+  productsFailure,
+  productsSuccess,
+  productStart,
+} from "@/store/actions/product.slice";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -47,6 +52,7 @@ const SingleProduct = () => {
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const { wishListItems } = useSelector((state) => state.wishList);
+  const { loading } = useSelector((state) => state.products);
   const { cartItems } = useSelector((state) => state.cart);
   const [productData, setProductData] = useState({});
 
@@ -61,6 +67,7 @@ const SingleProduct = () => {
   const roundedOffer = Math.round(offer);
 
   const fetchSingeProduct = async () => {
+    dispatch(productStart());
     try {
       if (id) {
         const res = await axios.get(
@@ -68,9 +75,11 @@ const SingleProduct = () => {
         );
         const data = res.data;
         setProductData(data.product);
+        dispatch(productsSuccess());
       }
     } catch (error) {
       console.log(error);
+      dispatch(productsFailure(error));
     }
   };
 
