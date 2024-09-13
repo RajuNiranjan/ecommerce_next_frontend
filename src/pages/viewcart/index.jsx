@@ -18,7 +18,7 @@ const ViewCart = () => {
   const { toast } = useToast();
   useEffect(() => {
     if (!user) {
-      router.push("/");
+      router.push("/login");
       toast({
         title: "please login ",
         duration: 1000,

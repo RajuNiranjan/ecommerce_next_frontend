@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "./ui/button";
 import {
@@ -22,6 +22,7 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -36,7 +37,12 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
-
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
 import { useToast } from "./ui/use-toast";
@@ -114,6 +120,12 @@ const NavBar = () => {
   const { toast } = useToast();
   const { wishListItems } = useSelector((state) => state.wishList);
   const { cartItems } = useSelector((state) => state.cart);
+
+  const [accordionValue, setAccordionValue] = useState(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const handleLinkClick = () => {
+    setIsSheetOpen(false);
+  };
 
   const handleLogOutAccount = () => {
     localStorage.clear();
@@ -220,31 +232,77 @@ const NavBar = () => {
         {/* MOBILE MENU */}
         <div className="md:hidden">
           {user ? (
-            <Sheet>
+            <Sheet
+              open={isSheetOpen}
+              onOpenChange={setIsSheetOpen}
+              className="p-0">
               <SheetTrigger>
                 <UserCircle2 />
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="flex flex-col justify-between  h-full">
-                <SheetHeader>
-                  <SheetTitle>{user.userName}</SheetTitle>
+                className="flex flex-col p-0 justify-between h-full">
+                <SheetHeader className="m-2 sticky top-0">
+                  <div className="bg-white shadow-lg border rounded-lg">
+                    <SheetTitle className="text-black p-2 text-start flex gap-2 items-center">
+                      <UserCircle2 /> {user.email}
+                    </SheetTitle>
+                  </div>
+                </SheetHeader>
+                <div className="flex flex-col w-full h-full overflow-scroll">
+                  <div>
+                    {NavigationData.map((item, index) => (
+                      <Accordion
+                        key={index}
+                        value={accordionValue}
+                        onValueChange={(value) => setAccordionValue(value)} // Manage the active accordion
+                        className="p-0 m-2 bg-transparent border-none"
+                        type="single"
+                        collapsible>
+                        <AccordionItem value={`item-${index}`}>
+                          <AccordionTrigger>{item.title}</AccordionTrigger>
+                          <AccordionContent>
+                            {item.subItems.map((items, idx) => (
+                              <Link
+                                key={idx}
+                                href={items.href}
+                                onClick={handleLinkClick} // Close sheet on navigation
+                                className="w-full h-10 flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                                {items.title}
+                              </Link>
+                            ))}
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    ))}
+                  </div>
                   <Link
                     href="/profile"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
-                    PROFILE
+                    onClick={handleLinkClick} // Close sheet on navigation
+                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                    <UserCircle2 size={18} /> PROFILE
                   </Link>
                   <Link
                     href="/wishlist"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
-                    WISH LIST
+                    onClick={handleLinkClick} // Close sheet on navigation
+                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                    <Heart size={18} /> WISH LIST
                   </Link>
                   <Link
                     href="/viewcart"
-                    className="w-full h-10 flex justify-start items-center p-2 rounded-lg bg-blue-50 hover:bg-blue-100">
-                    CART
+                    onClick={handleLinkClick} // Close sheet on navigation
+                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                    <ShoppingBag size={18} /> CART
                   </Link>
-                </SheetHeader>
+                </div>
+                <SheetFooter className="m-2">
+                  <Button
+                    type="button"
+                    onClick={handleLogOutAccount}
+                    className="flex justify-between bg-red-500 hover:bg-red-600 items-center">
+                    Log Out <LogOut size={16} />
+                  </Button>
+                </SheetFooter>
               </SheetContent>
             </Sheet>
           ) : (

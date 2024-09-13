@@ -100,7 +100,7 @@ const ViewCartProductCard = () => {
             </Card>
           ))
       ) : cartItems.length === 0 ? (
-        <div className="flex justify-center items-center h-screen w-screen">
+        <div>
           <Lottie animationData={Not_Found} loop autoplay />
         </div>
       ) : (
