@@ -24,6 +24,7 @@ const wishListSlice = createSlice({
         },
         wishListData: (state, action) => {
             state.wishListItems = action.payload
+            state.loading = false
         }
 
     }

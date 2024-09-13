@@ -23,7 +23,8 @@ const cartSlice = createSlice({
             state.error = null;
         },
         cartData: (state, action) => {
-            state.cartItems = action.payload
+            state.cartItems = action.payload;
+            state.loading = false
         }
 
     }

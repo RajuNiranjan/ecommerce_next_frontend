@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -128,8 +128,8 @@ const SingleProduct = () => {
     return wishListItems.some((item) => item._id === productId);
   };
 
-  const isInCart = (productId) => {
-    return cartItems.some((item) => item._id === productId);
+  const isInCartList = (productId) => {
+    return cartItems.some((item) => item.product._id === productId);
   };
 
   const handleAddOrRemoveWishList = async (productId) => {
@@ -194,6 +194,7 @@ const SingleProduct = () => {
 
   const handleAddOrRemoveToCart = async (e, productId) => {
     e.preventDefault();
+
     if (!user) {
       toast({
         title: "Please login to modify your wishlist",
@@ -228,11 +229,9 @@ const SingleProduct = () => {
     }
     dispatch(cartStart());
     try {
-      const userId = user?._id;
-      console.log("userid", userId);
-
       let res;
-      if (isInCart(productId)) {
+
+      if (isInCartList(productId)) {
         res = await axios.delete(
           `${API_URI}/api/cart/${user._id}/remove/${productId}`,
           {
