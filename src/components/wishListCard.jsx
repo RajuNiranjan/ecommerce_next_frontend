@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
@@ -14,8 +14,11 @@ import {
   wishListData,
 } from "@/store/actions/wishList.slice";
 import { Skeleton } from "./ui/skeleton";
+import dynamic from "next/dynamic";
+
+// Dynamically import Lottie to ensure it's only used on the client side
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import Not_Found from "@/assets/json/no_data.json";
-import Lottie from "lottie-react";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -30,12 +33,19 @@ const WishListCard = () => {
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const { API_URI } = ENV_VAR;
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const dispatch = useDispatch();
 
-  const fetchWishList = async () => {
+  // Define fetchWishList using useCallback to avoid recreating the function on each render
+  const fetchWishList = useCallback(async () => {
+    if (!user) return;
+
+    const TOKEN =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+    if (!TOKEN) return;
+
     dispatch(wishListStart());
+
     try {
       const res = await axios.get(`${API_URI}/api/wishlist/${user._id}`, {
         headers: {
@@ -44,16 +54,14 @@ const WishListCard = () => {
       });
       dispatch(wishListData(res.data.wishList));
     } catch (error) {
-      console.log(error);
+      console.error(error);
       dispatch(wishListFailure(error));
     }
-  };
+  }, [API_URI, dispatch, user]);
 
   useEffect(() => {
-    if (user && TOKEN) {
-      fetchWishList();
-    }
-  }, [API_URI, dispatch, TOKEN, user]);
+    fetchWishList();
+  }, [fetchWishList]);
 
   const isInWishlist = (productId) => {
     return wishListItems.some((item) => item._id === productId);
@@ -67,7 +75,12 @@ const WishListCard = () => {
       });
       return;
     }
+
+    const TOKEN =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
     dispatch(wishListStart());
+
     try {
       let res;
       if (isInWishlist(productId)) {
