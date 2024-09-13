@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -52,7 +52,6 @@ const SingleProduct = () => {
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const { wishListItems } = useSelector((state) => state.wishList);
-  const { loading } = useSelector((state) => state.products);
   const { cartItems } = useSelector((state) => state.cart);
   const [productData, setProductData] = useState({});
 
@@ -126,8 +125,8 @@ const SingleProduct = () => {
     return wishListItems.some((item) => item._id === productId);
   };
 
-  const isInCart = (productId) => {
-    return cartItems.some((item) => item._id === productId);
+  const isInCartList = (productId) => {
+    return cartItems.some((item) => item.product._id === productId);
   };
 
   const handleAddOrRemoveWishList = async (productId) => {
@@ -192,6 +191,7 @@ const SingleProduct = () => {
 
   const handleAddOrRemoveToCart = async (e, productId) => {
     e.preventDefault();
+
     if (!user) {
       toast({
         title: "Please login to modify your wishlist",
@@ -226,11 +226,9 @@ const SingleProduct = () => {
     }
     dispatch(cartStart());
     try {
-      const userId = user?._id;
-      console.log("userid", userId);
-
       let res;
-      if (isInCart(productId)) {
+
+      if (isInCartList(productId)) {
         res = await axios.delete(
           `${API_URI}/api/cart/${user._id}/remove/${productId}`,
           {
@@ -299,7 +297,8 @@ const SingleProduct = () => {
             <Badge
               className={`${
                 saleTypeColors[productData.saleType]
-              } rounded-l absolute top-0 left-0 tracking-widest`}>
+              } rounded-l absolute top-0 left-0 tracking-widest`}
+            >
               {productData?.saleType}
             </Badge>
           )}
@@ -311,7 +310,8 @@ const SingleProduct = () => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-8 text-red-500 cursor-pointer">
+                className="size-8 text-red-500 cursor-pointer"
+              >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -322,7 +322,8 @@ const SingleProduct = () => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-8 text-white cursor-pointer">
+                className="size-8 text-white cursor-pointer"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -384,7 +385,8 @@ const SingleProduct = () => {
                     value={size}
                     onClick={() =>
                       setSingleProductData({ ...singleProductData, size: size })
-                    }>
+                    }
+                  >
                     {size}
                   </ToggleGroupItem>
                 </ToggleGroup>
@@ -409,7 +411,8 @@ const SingleProduct = () => {
                     value={color}
                     onClick={() =>
                       setSingleProductData({ ...singleProductData, color })
-                    }></ToggleGroupItem>
+                    }
+                  ></ToggleGroupItem>
                 </ToggleGroup>
               ))}
             </div>
@@ -424,7 +427,8 @@ const SingleProduct = () => {
                   ...singleProductData,
                   quantity: Math.max(1, singleProductData.quantity - 1),
                 })
-              }>
+              }
+            >
               -
             </Button>
             <h1 className="text-2xl">{singleProductData.quantity}</h1>
@@ -435,7 +439,8 @@ const SingleProduct = () => {
                   ...singleProductData,
                   quantity: singleProductData.quantity + 1,
                 })
-              }>
+              }
+            >
               +
             </Button>
           </div>
@@ -444,9 +449,18 @@ const SingleProduct = () => {
           <div className="flex gap-4 w-full flex-col md:flex-row">
             <Button
               className="bg-red-500 hover:bg-red-600 w-full flex gap-1 hover:-translate-y-2 ease-in-out transition-all duration-500"
-              type="submit">
-              <ShoppingBag size={16} />
-              ADD TO BAG
+              type="submit"
+            >
+              {isInCartList(productData._id) ? (
+                <div className="flex items-center justify-center gap-2">
+                  <X size={16} /> REMOVE FROM BAG
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                  <ShoppingBag size={16} />
+                  ADD TO BAG
+                </div>
+              )}
             </Button>
             <Button
               type="button"
@@ -455,13 +469,15 @@ const SingleProduct = () => {
                 isInWishlist(productData._id)
                   ? "bg-black text-white"
                   : "text-black"
-              } border hover:text-white transition-all duration-500 flex items-center gap-1 hover:-translate-y-2 ease-in-out`}>
+              } border hover:text-white transition-all duration-500 flex items-center gap-1 hover:-translate-y-2 ease-in-out`}
+            >
               {isInWishlist(productData._id) ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="size-5 text-red-500 cursor-pointer">
+                  className="size-5 text-red-500 cursor-pointer"
+                >
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg>
               ) : (
