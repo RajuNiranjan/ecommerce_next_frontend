@@ -100,19 +100,17 @@ const ViewCartProductCard = () => {
             </Card>
           ))
       ) : cartItems.length === 0 ? (
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center h-screen w-screen">
           <Lottie animationData={Not_Found} loop autoplay />
         </div>
       ) : (
         cartItems.map((cart) => (
           <Card
             key={cart.product._id}
-            className="h-max w-full sm:h-[200px] relative"
-          >
+            className="h-max w-full sm:h-[200px] relative">
             <Badge
               onClick={() => handleRemoveFromCart(cart.product._id)}
-              className="absolute cursor-pointer -right-2 -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200"
-            >
+              className="absolute cursor-pointer -right-2 -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200">
               <X size={12} />
             </Badge>
             <CardContent className="h-full p-2">
