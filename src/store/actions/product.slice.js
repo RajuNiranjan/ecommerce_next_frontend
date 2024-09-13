@@ -5,6 +5,7 @@ const initialState = {
   error: null,
   products: [],
   allProducts: [],
+  SingleProduct: {},
 };
 
 const productsSlice = createSlice({
@@ -32,6 +33,10 @@ const productsSlice = createSlice({
       state.error = null;
       state.allProducts = action.payload;
     },
+    singleProductDataSuccess: (state, action) => {
+      state.SingleProduct = action.payload;
+      state.loading = false;
+    },
   },
 });
 
@@ -40,6 +45,7 @@ export const {
   productsFailure,
   productsSuccess,
   allProductSuccess,
+  singleProductDataSuccess,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
