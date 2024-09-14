@@ -48,6 +48,7 @@ const saleTypeColors = {
 const SingleProduct = () => {
   const router = useRouter();
   const { id } = router.query;
+
   const { API_URI } = ENV_VAR;
   const dispatch = useDispatch();
   const TOKEN =
@@ -77,6 +78,7 @@ const SingleProduct = () => {
           `${API_URI}/api/product/singel_product/${id}`
         );
         const data = res.data;
+
         dispatch(singleProductDataSuccess(data.product));
       }
     } catch (error) {

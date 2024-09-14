@@ -28,16 +28,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-} from "@/components/ui/navigation-menu";
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -143,27 +133,35 @@ const NavBar = () => {
           LOGO
         </Link>
       </div>
-      <div className="hidden md:block">
-        <NavigationMenu>
-          <NavigationMenuList>
-            {NavigationData.map((item, index) => (
-              <NavigationMenuItem key={index}>
-                <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  {item.subItems.map((items, index) => (
-                    <div key={index} className="w-[200px] flex flex-col gap-2">
-                      <Link
-                        href={items.href}
-                        className="hover:bg-blue-50 transition-all duration-300 p-2">
-                        <NavigationMenuLink>{items.title}</NavigationMenuLink>
-                      </Link>
-                    </div>
-                  ))}
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+      <div className="hidden md:flex justify-center items-center gap-6">
+        <Link
+          href="/products/shirt"
+          className={`${
+            pathName === "/products/shirt" && "text-red-500 font-bold"
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
+          SHIRT
+        </Link>
+        <Link
+          href="/products/pant"
+          className={`${
+            pathName === "/products/pant" && "text-red-500 font-bold"
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
+          PANT
+        </Link>
+        <Link
+          href="/products/tshirt"
+          className={`${
+            pathName === "/products/tshirt" && "text-red-500 font-bold"
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
+          T-SHIRT
+        </Link>
+        <Link
+          href="/products/hoodie"
+          className={`${
+            pathName === "/products/hoodie" && "text-red-500 font-bold"
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
+          HOODIE
+        </Link>
       </div>
       <div>
         {/* WEB MENU */}
@@ -172,7 +170,7 @@ const NavBar = () => {
             href="/wishlist"
             className={`${
               pathName === "/wishlist" && "text-red-500 "
-            } transition-all duration-500 hover:-translate-y-2 ease-in-out`}>
+            } transition-all duration-500  hover:-translate-y-1 ease-in-out`}>
             <div className="">
               <Heart className="absolute" />
 
@@ -186,7 +184,7 @@ const NavBar = () => {
             href="/viewcart"
             className={`${
               pathName === "/viewcart" && "text-red-500 "
-            } transition-all duration-500 hover:-translate-y-2 ease-in-out`}>
+            } transition-all duration-500 hover:-translate-y-1 ease-in-out`}>
             <div className="">
               <ShoppingBag className="absolute" />
               <p className="relative -top-3 -right-2 bg-red-500 h-5 w-5 flex justify-center items-center text-white rounded-full text-xs">
@@ -250,48 +248,60 @@ const NavBar = () => {
                   </div>
                 </SheetHeader>
                 <div className="flex flex-col w-full h-full overflow-scroll">
-                  <div>
-                    {NavigationData.map((item, index) => (
-                      <Accordion
-                        key={index}
-                        value={accordionValue}
-                        onValueChange={(value) => setAccordionValue(value)} // Manage the active accordion
-                        className="p-0 m-2 bg-transparent border-none"
-                        type="single"
-                        collapsible>
-                        <AccordionItem value={`item-${index}`}>
-                          <AccordionTrigger>{item.title}</AccordionTrigger>
-                          <AccordionContent>
-                            {item.subItems.map((items, idx) => (
-                              <Link
-                                key={idx}
-                                href={items.href}
-                                onClick={handleLinkClick} // Close sheet on navigation
-                                className="w-full h-10 flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
-                                {items.title}
-                              </Link>
-                            ))}
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                    ))}
+                  <div className="flex flex-col gap-4">
+                    <Link
+                      onClick={handleLinkClick}
+                      href="/products/shirt"
+                      className={`${
+                        pathName === "/products/shirt" &&
+                        "text-red-500 font-bold"
+                      } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      SHIRT
+                    </Link>
+                    <Link
+                      onClick={handleLinkClick}
+                      href="/products/pant"
+                      className={`${
+                        pathName === "/products/pant" &&
+                        "text-red-500 font-bold"
+                      } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      PANT
+                    </Link>
+                    <Link
+                      onClick={handleLinkClick}
+                      href="/products/tshirt"
+                      className={`${
+                        pathName === "/products/tshirt" &&
+                        "text-red-500 font-bold"
+                      } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      T-SHIRT
+                    </Link>
+                    <Link
+                      onClick={handleLinkClick}
+                      href="/products/hoodie"
+                      className={`${
+                        pathName === "/products/hoodie" &&
+                        "text-red-500 font-bold"
+                      } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      HOODIE
+                    </Link>
                   </div>
                   <Link
                     href="/profile"
                     onClick={handleLinkClick} // Close sheet on navigation
-                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100 hover:-translate-y-1 ease-in-out ">
                     <UserCircle2 size={18} /> PROFILE
                   </Link>
                   <Link
                     href="/wishlist"
                     onClick={handleLinkClick} // Close sheet on navigation
-                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100 hover:-translate-y-1 ease-in-out ">
                     <Heart size={18} /> WISH LIST
                   </Link>
                   <Link
                     href="/viewcart"
                     onClick={handleLinkClick} // Close sheet on navigation
-                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100">
+                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100 hover:-translate-y-1 ease-in-out ">
                     <ShoppingBag size={18} /> CART
                   </Link>
                 </div>
