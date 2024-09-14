@@ -48,7 +48,6 @@ const saleTypeColors = {
 const SingleProduct = () => {
   const router = useRouter();
   const { id } = router.query;
-
   const { API_URI } = ENV_VAR;
   const dispatch = useDispatch();
   const TOKEN =
@@ -58,6 +57,11 @@ const SingleProduct = () => {
   const { wishListItems } = useSelector((state) => state.wishList);
   const { cartItems } = useSelector((state) => state.cart);
   const { loading, SingleProduct } = useSelector((state) => state.products);
+
+  console.log(
+    "size",
+    cartItems.map((item) => item.size)
+  );
 
   const [singleProductData, setSingleProductData] = useState({
     size: "",
@@ -430,8 +434,7 @@ const SingleProduct = () => {
 
           <form
             className="space-y-4"
-            onSubmit={(e) => handleAddOrRemoveToCart(e, SingleProduct._id)} // Pass event and product ID
-          >
+            onSubmit={(e) => handleAddOrRemoveToCart(e, SingleProduct._id)}>
             {/* Size Selector */}
             <div className="flex flex-col gap-2">
               <h1 className="font-bold text-xl">Select Size</h1>
@@ -509,10 +512,18 @@ const SingleProduct = () => {
             {/* Add to Cart Button */}
             <div className="flex gap-4 w-full flex-col md:flex-row">
               <Button
+                onClick={(e) => handleAddOrRemoveToCart(e, SingleProduct?._id)}
                 className="bg-red-500 hover:bg-red-600 w-full flex gap-1 hover:-translate-y-2 ease-in-out transition-all duration-500"
                 type="submit">
-                <ShoppingBag size={16} />
-                ADD TO BAG
+                {isInCartList(SingleProduct?._id) ? (
+                  <>
+                    <X className="mr-2 h-4 w-4" /> Remove from Bag
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="mr-2 h-4 w-4" /> Add to Bag
+                  </>
+                )}
               </Button>
               <Button
                 type="button"
