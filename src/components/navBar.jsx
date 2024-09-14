@@ -2,15 +2,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "./ui/button";
-import {
-  Heart,
-  LogIn,
-  LogOut,
-  MenuIcon,
-  ShoppingBag,
-  UserCircle2,
-  X,
-} from "lucide-react";
+import { Heart, LogOut, ShoppingBag, UserCircle2, X } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,81 +19,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import ShirtSvg from "@/assets/svg/shirt.svg";
+import TShirtSvg from "@/assets/svg/tshirt.svg";
+import PantSvg from "@/assets/svg/pant.svg";
+import HoodieSvg from "@/assets/svg/hoodie.svg";
 import { authLogOut } from "@/store/actions/auth.slice";
 import { usePathname } from "next/navigation";
 import { useToast } from "./ui/use-toast";
-
-const NavigationData = [
-  {
-    id: 1,
-    title: "SHIRT",
-    subItems: [
-      {
-        id: 11,
-        title: "FULL HANDS",
-        href: "/",
-      },
-      {
-        id: 12,
-        title: "HALF HANDS",
-        href: "/",
-      },
-      {
-        id: 13,
-        title: "3/4 HANDS",
-        href: "/",
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "PANT",
-    subItems: [
-      {
-        id: 31,
-        title: "JEANS",
-        href: "/",
-      },
-      {
-        id: 32,
-        title: "COTTON",
-        href: "/",
-      },
-      {
-        id: 33,
-        title: "3/4 HANDS",
-        href: "/",
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "T-SHIRT",
-    subItems: [
-      {
-        id: 21,
-        title: "FULL HANDS",
-        href: "/",
-      },
-      {
-        id: 22,
-        title: "HALF HANDS",
-        href: "/",
-      },
-      {
-        id: 23,
-        title: "3/4 HANDS",
-        href: "/",
-      },
-    ],
-  },
-];
+import Image from "next/image";
 
 const NavBar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -110,8 +35,6 @@ const NavBar = () => {
   const { toast } = useToast();
   const { wishListItems } = useSelector((state) => state.wishList);
   const { cartItems } = useSelector((state) => state.cart);
-
-  const [accordionValue, setAccordionValue] = useState(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const handleLinkClick = () => {
     setIsSheetOpen(false);
@@ -129,43 +52,45 @@ const NavBar = () => {
       <div>
         <Link
           href="/"
-          className="hover:text-red-500 transition-all duration-100">
-          LOGO
+          className="text-red-500 text-xl font-bold flex items-center">
+          TREND
+          <Image src={ShirtSvg} alt="shirt" width={30} height={30} /> SET
         </Link>
       </div>
-      <div className="hidden md:flex justify-center items-center gap-6">
+      <div className="hidden lg:flex justify-center items-center gap-6">
         <Link
           href="/products/shirt"
           className={`${
             pathName === "/products/shirt" && "text-red-500 font-bold"
-          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
-          SHIRT
+          } transition-all duration-500 hover:text-red-500 flex justify-center items-center hover:-translate-y-1 ease-in-out`}>
+          <Image src={ShirtSvg} alt="shirt" width={30} height={30} /> SHIRT
         </Link>
         <Link
           href="/products/pant"
           className={`${
             pathName === "/products/pant" && "text-red-500 font-bold"
-          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
-          PANT
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out flex justify-center items-center`}>
+          <Image src={PantSvg} alt="shirt" width={30} height={30} /> PANT
         </Link>
         <Link
           href="/products/tshirt"
           className={`${
             pathName === "/products/tshirt" && "text-red-500 font-bold"
-          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out flex justify-center items-center`}>
+          <Image src={TShirtSvg} alt="shirt" width={30} height={30} />
           T-SHIRT
         </Link>
         <Link
           href="/products/hoodie"
           className={`${
             pathName === "/products/hoodie" && "text-red-500 font-bold"
-          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out`}>
-          HOODIE
+          } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out flex justify-center items-center`}>
+          <Image src={HoodieSvg} alt="shirt" width={30} height={30} /> HOODIE
         </Link>
       </div>
       <div>
         {/* WEB MENU */}
-        <div className=" hidden md:flex gap-10 items-center justify-center">
+        <div className=" hidden lg:flex gap-10 items-center justify-center">
           <Link
             href="/wishlist"
             className={`${
@@ -228,7 +153,7 @@ const NavBar = () => {
         </div>
 
         {/* MOBILE MENU */}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           {user ? (
             <Sheet
               open={isSheetOpen}
@@ -241,7 +166,7 @@ const NavBar = () => {
                 side="left"
                 className="flex flex-col p-0 justify-between h-full">
                 <SheetHeader className="m-2 sticky top-0">
-                  <div className="bg-white shadow-lg border rounded-lg">
+                  <div>
                     <SheetTitle className="text-black p-2 text-start flex gap-2 items-center">
                       <UserCircle2 /> {user.email}
                     </SheetTitle>
@@ -256,6 +181,12 @@ const NavBar = () => {
                         pathName === "/products/shirt" &&
                         "text-red-500 font-bold"
                       } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      <Image
+                        src={ShirtSvg}
+                        alt="shirt"
+                        width={30}
+                        height={30}
+                      />{" "}
                       SHIRT
                     </Link>
                     <Link
@@ -265,6 +196,7 @@ const NavBar = () => {
                         pathName === "/products/pant" &&
                         "text-red-500 font-bold"
                       } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      <Image src={PantSvg} alt="shirt" width={30} height={30} />{" "}
                       PANT
                     </Link>
                     <Link
@@ -274,6 +206,12 @@ const NavBar = () => {
                         pathName === "/products/tshirt" &&
                         "text-red-500 font-bold"
                       } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      <Image
+                        src={TShirtSvg}
+                        alt="shirt"
+                        width={30}
+                        height={30}
+                      />{" "}
                       T-SHIRT
                     </Link>
                     <Link
@@ -283,26 +221,38 @@ const NavBar = () => {
                         pathName === "/products/hoodie" &&
                         "text-red-500 font-bold"
                       } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                      <Image
+                        src={HoodieSvg}
+                        alt="shirt"
+                        width={30}
+                        height={30}
+                      />{" "}
                       HOODIE
                     </Link>
                   </div>
                   <Link
                     href="/profile"
                     onClick={handleLinkClick} // Close sheet on navigation
-                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100 hover:-translate-y-1 ease-in-out ">
-                    <UserCircle2 size={18} /> PROFILE
+                    className={`${
+                      pathName === "/profile" && "text-red-500 font-bold"
+                    } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                    <UserCircle2 size={26} /> PROFILE
                   </Link>
                   <Link
                     href="/wishlist"
                     onClick={handleLinkClick} // Close sheet on navigation
-                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100 hover:-translate-y-1 ease-in-out ">
-                    <Heart size={18} /> WISH LIST
+                    className={`${
+                      pathName === "/wishlist" && "text-red-500 font-bold"
+                    } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                    <Heart size={26} /> WISH LIST
                   </Link>
                   <Link
                     href="/viewcart"
                     onClick={handleLinkClick} // Close sheet on navigation
-                    className="w-full h-20 border-b-[1px] flex gap-2 items-center p-2 transition-all duration-300 hover:bg-red-100 hover:-translate-y-1 ease-in-out ">
-                    <ShoppingBag size={18} /> CART
+                    className={`${
+                      pathName === "/viewcart" && "text-red-500 font-bold"
+                    } transition-all duration-500 hover:text-red-500 hover:-translate-y-1 ease-in-out  w-full h-14 border-b-[1px] flex gap-2 items-center p-2 hover:bg-red-100`}>
+                    <ShoppingBag size={26} /> CART
                   </Link>
                 </div>
                 <SheetFooter className="m-2">

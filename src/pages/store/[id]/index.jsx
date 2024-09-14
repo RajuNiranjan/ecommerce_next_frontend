@@ -55,7 +55,7 @@ const StoreHome = () => {
   return (
     <div className="p-4">
       <Tabs defaultValue="orders">
-        <TabsList className="w-max ">
+        <TabsList className="mb-14 sticky top-20% flex flex-wrap ">
           <TabsTrigger value="orders">ORDERS</TabsTrigger>
           <TabsTrigger value="products">PRODUCTS</TabsTrigger>
           <TabsTrigger value="customers">CUSTOMERS</TabsTrigger>

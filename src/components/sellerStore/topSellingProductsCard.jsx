@@ -114,7 +114,7 @@ const TopSellingProductsCard = () => {
             editProduct={editProduct}
           />
         ) : (
-          <Card className="h-[650px] overflow-scroll">
+          <Card className="h-[650px] overflow-scroll ">
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
                 PRODUCT DETAILS
