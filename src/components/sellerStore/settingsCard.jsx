@@ -10,7 +10,7 @@ const SettingsCard = () => {
   console.log("seller", seller);
 
   const [storeData, setStoreData] = useState({
-    businessName: seller?.businessName || "",
+    bussinessName: seller?.bussinessName || "",
     storeName: seller?.storeName || "",
     storeAddress: seller?.storeAddress || "",
     storeDescription: seller?.storeDescription || "",
@@ -29,8 +29,8 @@ const SettingsCard = () => {
       <CardContent>
         <form action="" className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label htmlFor="businessName">Business Name</label>
-            <Input value={storeData.businessName} />
+            <label htmlFor="bussinessName">Business Name</label>
+            <Input value={storeData.bussinessName} />
           </div>
           <div className="space-y-2">
             <label htmlFor="storeName">Store Name</label>

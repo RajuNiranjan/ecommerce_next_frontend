@@ -21,7 +21,7 @@ const BecomeSellerRegCard = () => {
 
   const dispatch = useDispatch();
   const [sellerForm, setSellerForm] = useState({
-    businessName: "",
+    bussinessName: "",
     storeName: "",
     storeEmail: "",
     storeAddress: "",
@@ -81,13 +81,13 @@ const BecomeSellerRegCard = () => {
       <form onSubmit={handleSumbitSellerForm} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           <div>
-            <Label htmlFor="businessName">Business Name</Label>
+            <Label htmlFor="bussinessName">Bussiness Name</Label>
             <Input
-              id="businessName"
-              name="businessName"
+              id="bussinessName"
+              name="bussinessName"
               type="text"
               autoComplete="name"
-              value={sellerForm.businessName}
+              value={sellerForm.bussinessName}
               onChange={handleChangeText}
               required
               placeholder="Cloths Marketing"
