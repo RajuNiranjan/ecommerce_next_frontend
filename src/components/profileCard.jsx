@@ -31,11 +31,17 @@ import {
   sellerSuccess,
 } from "@/store/actions/seller.slice";
 import { Skeleton } from "./ui/skeleton";
+import {
+  addressFailure,
+  addressStart,
+  addressSuccess,
+} from "@/store/actions/address.slice";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
   const { API_URI } = ENV_VAR;
-  const TOKEN = localStorage.getItem("token");
+  const TOKEN =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const dispatch = useDispatch();
   const { address, loading: addressLoading } = useSelector(
     (state) => state.address
@@ -43,6 +49,26 @@ const ProfileCard = () => {
   const { seller, loading: sellerLoading } = useSelector(
     (state) => state.seller
   );
+
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (!TOKEN) return;
+      dispatch(addressStart());
+      try {
+        const res = await axios.get(`${API_URI}/api/address`, {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+          },
+        });
+        const data = res.data.address;
+        dispatch(addressSuccess(data));
+      } catch (error) {
+        console.error("Failed to fetch address data:", error);
+        dispatch(addressFailure(error));
+      }
+    };
+    fetchAddress();
+  }, [TOKEN, dispatch]);
 
   useEffect(() => {
     const fetchSeller = async () => {
@@ -56,8 +82,6 @@ const ProfileCard = () => {
             Authorization: `Bearer ${TOKEN}`,
           },
         });
-
-        // Process seller data
         const sellerData = response.data;
 
         dispatch(sellerSuccess(sellerData.seller));
@@ -70,7 +94,7 @@ const ProfileCard = () => {
     if (!seller) {
       fetchSeller();
     }
-  }, [API_URI, TOKEN, dispatch, seller]);
+  }, [API_URI, TOKEN, dispatch]);
 
   return (
     <Card className="w-full h-full border border-gray-300 hover:shadow-lg transition-all duration-300 p-4 space-y-4">

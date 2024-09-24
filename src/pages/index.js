@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { addressStart } from "@/store/actions/address.slice";
+
 
 
 const Home = () => {
@@ -33,11 +35,12 @@ const Home = () => {
     fetchProducts();
   }, [API_URI, dispatch]);
 
+
+
   return (
     <>
       <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6  gap-4">
         {loading ? (
-          // Render skeletons when loading
           Array(12)
             .fill(0)
             .map((_, index) => (

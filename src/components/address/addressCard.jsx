@@ -28,7 +28,6 @@ import {
 
 const AddressCard = () => {
   const { address } = useSelector((state) => state.address);
-  console.log("address crad", address);
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
