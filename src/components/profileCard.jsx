@@ -24,11 +24,7 @@ import { useEffect } from "react";
 import { ENV_VAR } from "@/config/envVar";
 import axios from "axios";
 import Link from "next/link";
-import {
-  addressFailure,
-  addressStart,
-  addressSuccess,
-} from "@/store/actions/address.slice";
+
 import {
   sellerFailure,
   sellerStart,
@@ -47,34 +43,6 @@ const ProfileCard = () => {
   const { seller, loading: sellerLoading } = useSelector(
     (state) => state.seller
   );
-
-  useEffect(() => {
-    const fetchAddress = async () => {
-      if (!TOKEN) {
-        return;
-      }
-      dispatch(addressStart());
-      try {
-        const response = await axios.get(`${API_URI}/api/address`, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
-
-        // Process address data
-        const addressData = response.data;
-
-        dispatch(addressSuccess(addressData.address));
-      } catch (error) {
-        console.error("Failed to fetch address data:", error);
-        dispatch(addressFailure(error));
-      }
-    };
-
-    if (!address) {
-      fetchAddress();
-    }
-  }, [API_URI, TOKEN, dispatch, address]);
 
   useEffect(() => {
     const fetchSeller = async () => {
@@ -118,16 +86,18 @@ const ProfileCard = () => {
       {/* ADDRESS */}
       <div className="w-full">
         {addressLoading ? (
-          <Card className="bg-transparent space-y-1 hover:shadow-xl transition-all duration-300 p-2">
+          <Card className="bg-transparent hover:shadow-xl transition-all duration-300 space-y-2 p-2">
             <CardHeader className="p-0">
-              <Skeleton className="w-[100px] h-[20px] rounded-full" />
+              <Skeleton className="w-full h-3 rounded-full" />
             </CardHeader>
             <CardContent className="p-0 space-y-4">
-              <Skeleton className="w-full h-[20px] rounded" />
-              <Skeleton className="w-[150px] h-[15px] rounded" />
+              <Skeleton className="w-full h-3 rounded" />
             </CardContent>
-            <CardFooter className="p-0">
-              <Skeleton className="w-[80px] h-[15px] rounded" />
+            <CardFooter className="p-0 flex justify-between items-center">
+              <Skeleton className="w-[80px] h-3 rounded" />
+              <Skeleton className="w-[80px] h-3 rounded" />
+              <Skeleton className="w-[80px] h-3 rounded" />
+              <Skeleton className="w-4 h-4 rounded-full" />
             </CardFooter>
           </Card>
         ) : address ? (

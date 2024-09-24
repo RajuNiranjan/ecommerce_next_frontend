@@ -42,7 +42,8 @@ const AddAddressCard = ({ address, onSuccess }) => {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const apiUri = ENV_VAR.API_URI;
-  const TOKEN = localStorage.getItem("token");
+  const TOKEN =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const handleChangeInput = (e) => {
     const { id, value } = e.target;

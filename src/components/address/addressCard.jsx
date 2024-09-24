@@ -15,7 +15,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import { Edit3, TrashIcon } from "lucide-react";
 import AddAddressCard from "./addAddressCard";
 import { ENV_VAR } from "@/config/envVar";
@@ -29,6 +28,7 @@ import {
 
 const AddressCard = () => {
   const { address } = useSelector((state) => state.address);
+  console.log("address crad", address);
   const { API_URI } = ENV_VAR;
   const TOKEN = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
