@@ -13,7 +13,6 @@ import {
 } from "@/store/actions/wishList.slice";
 import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
-import { Skeleton } from "./ui/skeleton";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -24,7 +23,6 @@ const saleTypeColors = {
 };
 
 const ProductCard = ({ product }) => {
-  const { loading } = useSelector((state) => state.products);
   const { wishListItems } = useSelector((state) => state.wishList);
   const dispatch = useDispatch();
   const { API_URI } = ENV_VAR;
@@ -103,7 +101,7 @@ const ProductCard = ({ product }) => {
         });
       }
       dispatch(wishListSuccess(res.data.wishList));
-      fetchWishList(); // Refetch wishlist to update UI
+      fetchWishList();
     } catch (error) {
       console.error(error);
       dispatch(wishListFailure(error));
@@ -111,32 +109,18 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <>
-      {loading ? (
-        // Render skeletons when loading
-        Array(6)
-          .fill(0)
-          .map((_, index) => (
-            <Card
-              key={index}
-              className="w-full overflow-hidden h-full bg-white transition-all duration-700 relative">
-              <Skeleton className="w-[300px] h-[300px] rounded-sm" />
-              <CardFooter className="p-2 my-2 h-[30%] w-full flex justify-center flex-col items-start">
-                <Skeleton className="w-[100px] h-[20px] rounded-full" />
-                <Skeleton className="w-[150px] h-[15px] mt-2 rounded-full" />
-                <Skeleton className="w-[80px] h-[15px] mt-2 rounded-full" />
-              </CardFooter>
-            </Card>
-          ))
-      ) : (
+    <div>
+      {
         <Card
           key={product._id}
-          className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out">
+          className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out"
+        >
           {product.saleType !== "NONE" && (
             <Badge
               className={`${
                 saleTypeColors[product.saleType]
-              } rounded-l absolute top-0 left-0 tracking-widest`}>
+              } rounded-l absolute top-0 left-0 tracking-widest`}
+            >
               {product.saleType}
             </Badge>
           )}
@@ -147,7 +131,8 @@ const ProductCard = ({ product }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-5 text-red-500 cursor-pointer">
+                className="size-5 text-red-500 cursor-pointer"
+              >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -158,7 +143,8 @@ const ProductCard = ({ product }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 text-white cursor-pointer">
+                className="size-5 text-white cursor-pointer"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -182,7 +168,8 @@ const ProductCard = ({ product }) => {
           <CardFooter className="p-2 my-2 h-[30%] w-full flex justify-center flex-col items-start">
             <Link
               href={`/products/${product._id}`}
-              className="transition-all duration-200 hover:text-red-500">
+              className="transition-all duration-200 hover:text-red-500"
+            >
               <h1 className="text-md font-medium">{product.productName}</h1>
             </Link>
             <div className="flex justify-between w-full">
@@ -205,8 +192,8 @@ const ProductCard = ({ product }) => {
             </div>
           </CardFooter>
         </Card>
-      )}
-    </>
+      }
+    </div>
   );
 };
 
