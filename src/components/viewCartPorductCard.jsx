@@ -17,7 +17,6 @@ import { Skeleton } from "./ui/skeleton";
 import dynamic from "next/dynamic";
 import Not_Found from "@/assets/json/no_data.json";
 
-// Dynamically import Lottie to ensure it's only used on the client side
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const ViewCartProductCard = () => {
@@ -26,7 +25,6 @@ const ViewCartProductCard = () => {
   const { API_URI } = ENV_VAR;
   const dispatch = useDispatch();
 
-  // Ensure client-side only for localStorage
   const TOKEN =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -81,36 +79,56 @@ const ViewCartProductCard = () => {
   return (
     <>
       {loading ? (
-        Array(6)
+        Array(12)
           .fill(0)
           .map((_, index) => (
             <Card key={index} className="h-max w-full sm:h-[200px] relative">
-              <CardContent>
-                <div className="flex gap-2 items-start justify-start">
-                  <div className="h-[180px] w-50%">
-                    <Skeleton className="h-[200px] w-[150px] rounded-sm" />
+              <CardContent className="h-full p-2">
+                <div className="grid grid-cols-2 gap-2 items-start justify-start">
+                  <div className="h-[180px]">
+                    <Skeleton className="w-full h-full" />
                   </div>
-                  <div>
-                    <Skeleton className="w-[100px] h-[20px] rounded-full" />
-                    <Skeleton className="w-[150px] h-[15px] mt-2 rounded-full" />
-                    <Skeleton className="w-[80px] h-[15px] mt-2 rounded-full" />
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-[80%]" />
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-5 w-32" />
+                      <Skeleton className="h-6 w-6 rounded-full" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-5 w-20" />
+                      <Skeleton className="h-6 w-6" />
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-5 w-10" />
+                        <Skeleton className="h-4 w-6" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-5 w-10" />
+                        <Skeleton className="h-4 w-6" />
+                      </div>
+                    </div>
+                    <Skeleton className="w-full h-5" />
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))
       ) : cartItems.length === 0 ? (
-        <div>
+        <div className="w-screen">
           <Lottie animationData={Not_Found} loop autoplay />
         </div>
       ) : (
         cartItems.map((cart) => (
           <Card
             key={cart.product._id}
-            className="h-max w-full sm:h-[200px] relative">
+            className="h-max w-full sm:h-[200px] relative"
+          >
             <Badge
               onClick={() => handleRemoveFromCart(cart.product._id)}
-              className="absolute cursor-pointer -right-2 -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200">
+              className="absolute cursor-pointer -right-2 -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200"
+            >
               <X size={12} />
             </Badge>
             <CardContent className="h-full p-2">
