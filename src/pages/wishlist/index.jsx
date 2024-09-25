@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 
 const WishList = () => {
   const { user } = useSelector((state) => state.auth);
+
   const router = useRouter();
   const { toast } = useToast();
   useEffect(() => {

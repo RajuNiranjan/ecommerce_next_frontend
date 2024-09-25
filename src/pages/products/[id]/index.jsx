@@ -31,7 +31,6 @@ import {
 } from "@/store/actions/cart.slice";
 import {
   productsFailure,
-  productsSuccess,
   productStart,
   singleProductDataSuccess,
 } from "@/store/actions/product.slice";
@@ -57,11 +56,6 @@ const SingleProduct = () => {
   const { wishListItems } = useSelector((state) => state.wishList);
   const { cartItems } = useSelector((state) => state.cart);
   const { loading, SingleProduct } = useSelector((state) => state.products);
-
-  console.log(
-    "size",
-    cartItems.map((item) => item.size)
-  );
 
   const [singleProductData, setSingleProductData] = useState({
     size: "",
@@ -317,8 +311,7 @@ const SingleProduct = () => {
               <Badge
                 className={`${
                   saleTypeColors[SingleProduct.saleType]
-                } rounded-l absolute top-0 left-0 tracking-widest`}
-              >
+                } rounded-l absolute top-0 left-0 tracking-widest`}>
                 {SingleProduct?.saleType}
               </Badge>
             )}
@@ -330,8 +323,7 @@ const SingleProduct = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="size-8 text-red-500 cursor-pointer"
-                >
+                  className="size-8 text-red-500 cursor-pointer">
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg>
               ) : (
@@ -342,8 +334,7 @@ const SingleProduct = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-8 text-white cursor-pointer"
-                >
+                  className="size-8 text-white cursor-pointer">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -360,25 +351,20 @@ const SingleProduct = () => {
 
       {loading ? (
         <div className="flex flex-col gap-4">
-          {/* Skeleton for categories */}
           <Skeleton className="w-[200px] h-[40px] rounded-md" />
 
-          {/* Skeleton for product name */}
           <Skeleton className="w-[150px] h-[30px] rounded-md" />
 
-          {/* Skeleton for price */}
           <div className="flex flex-col gap-2">
             <Skeleton className="w-[100px] h-[30px] rounded-md" />
             <Skeleton className="w-[50px] h-[20px] rounded-md" />
           </div>
 
-          {/* Skeleton for badges */}
           <div className="flex gap-2">
             <Skeleton className="w-[100px] h-[20px] rounded-md" />
             <Skeleton className="w-[100px] h-[20px] rounded-md" />
           </div>
 
-          {/* Skeleton for size and color selectors */}
           <div className="flex flex-col gap-2">
             <Skeleton className="w-[150px] h-[20px] rounded-md" />
             <div className="flex gap-4">
@@ -388,20 +374,17 @@ const SingleProduct = () => {
             </div>
           </div>
 
-          {/* Skeleton for quantity selector */}
           <div className="flex items-center gap-4">
             <Skeleton className="w-[40px] h-[40px] rounded-md" />
             <Skeleton className="w-[50px] h-[30px] rounded-md" />
             <Skeleton className="w-[40px] h-[40px] rounded-md" />
           </div>
 
-          {/* Skeleton for add to cart and wishlist buttons */}
           <div className="flex gap-4 w-full flex-col md:flex-row">
             <Skeleton className="w-full h-[50px] rounded-md" />
             <Skeleton className="w-full h-[50px] rounded-md" />
           </div>
 
-          {/* Skeleton for description */}
           <Skeleton className="w-full h-[80px] rounded-md" />
         </div>
       ) : (
@@ -437,8 +420,7 @@ const SingleProduct = () => {
 
           <form
             className="space-y-4"
-            onSubmit={(e) => handleAddOrRemoveToCart(e, SingleProduct._id)}
-          >
+            onSubmit={(e) => handleAddOrRemoveToCart(e, SingleProduct._id)}>
             {/* Size Selector */}
             <div className="flex flex-col gap-2">
               <h1 className="font-bold text-xl">Select Size</h1>
@@ -457,8 +439,7 @@ const SingleProduct = () => {
                           ...singleProductData,
                           size: size,
                         })
-                      }
-                    >
+                      }>
                       {size}
                     </ToggleGroupItem>
                   </ToggleGroup>
@@ -483,8 +464,7 @@ const SingleProduct = () => {
                       value={color}
                       onClick={() =>
                         setSingleProductData({ ...singleProductData, color })
-                      }
-                    ></ToggleGroupItem>
+                      }></ToggleGroupItem>
                   </ToggleGroup>
                 ))}
               </div>
@@ -499,8 +479,7 @@ const SingleProduct = () => {
                     ...singleProductData,
                     quantity: Math.max(1, singleProductData.quantity - 1),
                   })
-                }
-              >
+                }>
                 -
               </Button>
               <h1 className="text-2xl">{singleProductData.quantity}</h1>
@@ -511,8 +490,7 @@ const SingleProduct = () => {
                     ...singleProductData,
                     quantity: singleProductData.quantity + 1,
                   })
-                }
-              >
+                }>
                 +
               </Button>
             </div>
@@ -522,8 +500,7 @@ const SingleProduct = () => {
               <Button
                 onClick={(e) => handleAddOrRemoveToCart(e, SingleProduct?._id)}
                 className="bg-red-500 hover:bg-red-600 w-full flex gap-1 hover:-translate-y-2 ease-in-out transition-all duration-500"
-                type="submit"
-              >
+                type="submit">
                 {isInCartList(SingleProduct?._id) ? (
                   <>
                     <X className="mr-2 h-4 w-4" /> Remove from Bag
@@ -541,15 +518,13 @@ const SingleProduct = () => {
                   isInWishlist(SingleProduct._id)
                     ? "bg-black text-white"
                     : "text-black"
-                } border hover:text-white transition-all duration-500 flex items-center gap-1 hover:-translate-y-2 ease-in-out`}
-              >
+                } border hover:text-white transition-all duration-500 flex items-center gap-1 hover:-translate-y-2 ease-in-out`}>
                 {isInWishlist(SingleProduct._id) ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="size-5 text-red-500 cursor-pointer"
-                  >
+                    className="size-5 text-red-500 cursor-pointer">
                     <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                   </svg>
                 ) : (
