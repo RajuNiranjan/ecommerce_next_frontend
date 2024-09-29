@@ -1,40 +1,82 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# E-commerce Clothing Website
 
-## Getting Started
+This project is a fully responsive e-commerce clothing website built with **Next.js**, **Tailwind CSS**, **JavaScript**, **Redux Toolkit**, **Axios**, and **shadcn/ui**. It allows users to browse products, add them to a wishlist or cart, and make purchases. Sellers can sign up to manage their products.
 
-First, run the development server:
+### [Live Demo](https://trendsetnext.vercel.app/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+- User authentication (JWT-based)
+- Browse and filter products by category
+- Add/remove items from the cart and wishlist
+- Responsive design using Tailwind CSS
+- State management using Redux Toolkit
+- Sellers can perform CRUD operations on their products
+- Upload product images using **Cloudinary**
+- Toast notifications for user actions
+- Modular and reusable UI components with **shadcn/ui**
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Tech Stack
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- **Frontend**: Next.js, Tailwind CSS, shadcn/ui
+- **State Management**: Redux Toolkit
+- **API**: Axios for making HTTP requests
+- **Authentication**: JWT-based
+- **Backend**: Node.js, Express.js, MongoDB
+- **Image Hosting**: Cloudinary
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Installation
 
-To learn more about Next.js, take a look at the following resources:
+1. Clone the repository:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   git clone https://github.com/RajuNiranjan/ecommerce_next_frontend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+2. Navigate to the project directory:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   cd ecommerce_next_frontend
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+3. Install dependencies:
+
+   ```bash
+   npm install
+
+4. Create a `.env` file for environment variables:
+
+   ```bash
+    NEXT_PUBLIC_API_URI=<your-api-url>
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="<your-cloudinary-cloud-name>"
+    NEXT_PUBLIC_CLOUDINARY_API_KEY="<your-cloudinary-api-key>"
+    CLOUDINARY_API_SECRET="<your-cloudinary-api-secret>"
+
+
+5. Start the development server:
+
+   ```bash
+   npm run dev
+
+## Screenshots
+
+### Home Page
+![Home Page](http://res.cloudinary.com/dlgewrscf/image/upload/v1727580594/lwse94urdj6zr1jmcxak.png)
+
+### Single Product Page
+![Single Product Page](http://res.cloudinary.com/dlgewrscf/image/upload/v1727580594/ilei8ttkmepwwooqrejh.png)
+
+### Cart Items Page
+![Cart Items Page](http://res.cloudinary.com/dlgewrscf/image/upload/v1727580593/ttc3kjmpyhcahqoe3axd.png)
+
+### Wishlist Page
+![Wishlist Page](https://res.cloudinary.com/dlgewrscf/image/upload/v1727580595/idenhqvrj1016uj354pz.png)
+
+### Login Page
+![Login Page](http://res.cloudinary.com/dlgewrscf/image/upload/v1727581528/tojmjtolepf8ttqiniyr.png)
+
+### Register Page
+![Register Page](http://res.cloudinary.com/dlgewrscf/image/upload/v1727580594/ijacjgkwd54pe4bntobc.png)
+
+
