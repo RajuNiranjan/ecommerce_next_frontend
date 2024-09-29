@@ -219,10 +219,10 @@ const WishListCard = () => {
                 </div>
                 <div className="flex flex-col items-end">
                   <h1 className="text-sm md:text-lg text-green-500 font-medium">
-                    ₹{wishListItem.price}
+                    ₹{wishListItem.offerPrice}
                   </h1>
                   <small className="text-xs line-through text-slate-500">
-                    ₹{wishListItem.offerPrice}
+                    ₹{wishListItem.price}
                   </small>
                 </div>
               </div>
