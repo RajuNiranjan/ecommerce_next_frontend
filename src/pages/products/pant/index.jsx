@@ -43,13 +43,13 @@ const Pant = () => {
                 </CardContent>
                 <CardFooter className="p-2 flex flex-col gap-4  my-2 h-[30%]">
                   <Skeleton className="h-3 rounded-full w-full" />
-                  <div className="flex gap-4 justify-between items-center">
-                    <Skeleton className="h-3 w-32  rounded-full " />
-                    <Skeleton className="h-3 w-8  rounded-full " />
-                  </div>
-                  <div className="flex gap-4 justify-between items-center">
-                    <Skeleton className="h-3 w-32  rounded-full " />
-                    <Skeleton className="h-3 w-8  rounded-full " />
+                  <div className="flex gap-4 w-full justify-between items-center">
+                    <Skeleton className="h-3 w-[80%]  rounded-full " />
+                    <Skeleton className="h-3 w-[20%]  rounded-full " />
+                  </div>{" "}
+                  <div className="flex gap-4 w-full justify-between items-center">
+                    <Skeleton className="h-3 w-[80%]  rounded-full " />
+                    <Skeleton className="h-3 w-[20%]  rounded-full " />
                   </div>
                 </CardFooter>
               </Card>
