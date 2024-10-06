@@ -2,16 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { useToast } from "../ui/use-toast";
-import { useDispatch, useSelector } from "react-redux";
-import { ENV_VAR } from "@/config/envVar";
-import axios from "axios";
+
 import { Loader2 } from "lucide-react";
-import {
-  addressFailure,
-  addressStart,
-  addressSuccess,
-} from "@/store/actions/address.slice";
+
+import { useAddress } from "@/hooks/useAddress.hook";
+import { useSelector } from "react-redux";
 
 const AddAddressCard = ({ address, onSuccess }) => {
   const { user } = useSelector((state) => state.auth);
@@ -39,11 +34,6 @@ const AddAddressCard = ({ address, onSuccess }) => {
     }
   }, [address, user._id]);
   const { loading } = useSelector((state) => state.address);
-  const { toast } = useToast();
-  const dispatch = useDispatch();
-  const apiUri = ENV_VAR.API_URI;
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const handleChangeInput = (e) => {
     const { id, value } = e.target;
@@ -53,64 +43,21 @@ const AddAddressCard = ({ address, onSuccess }) => {
     }));
   };
 
+  const { addressRegistrationOrUpdate } = useAddress();
+
   const handleSubmitAddressForm = async (e) => {
     e.preventDefault();
-
-    if (
-      !addAddress.name ||
-      !addAddress.addressLine1 ||
-      !addAddress.addressLine2 ||
-      !addAddress.landMark ||
-      !addAddress.doorNo ||
-      !addAddress.mobileNumber
-    ) {
-      return toast({ title: "Please fill all the fields", duration: 1000 });
-    }
-
-    dispatch(addressStart());
-
-    try {
-      let res;
-      if (address) {
-        res = await axios.patch(
-          `${apiUri}/api/address/${address._id}`,
-          addAddress,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-      } else {
-        res = await axios.post(`${apiUri}/api/address`, addAddress, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
-      }
-
-      const data = res.data;
-      dispatch(addressSuccess(data.address));
-      toast({
-        title: data.message,
-        duration: 1000,
-      });
-
-      onSuccess();
-    } catch (error) {
-      console.error(error?.response?.data);
-      dispatch(addressFailure(error?.response?.data));
-
-      const errorMessage =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message;
-
-      toast({
-        title: errorMessage,
-        duration: 1000,
-      });
-    }
+    await addressRegistrationOrUpdate({
+      name: addAddress.name,
+      addressLine1: addAddress.addressLine1,
+      addressLine2: addAddress.addressLine2,
+      landMark: addAddress.landMark,
+      doorNo: addAddress.doorNo,
+      mobileNumber: addAddress.mobileNumber,
+      userId: addAddress.userId,
+      address,
+      onSuccess,
+    });
   };
 
   return (
