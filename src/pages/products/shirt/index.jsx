@@ -1,40 +1,25 @@
 import ProductCard from "@/components/productCard";
 
-import { ENV_VAR } from "@/config/envVar";
+import { useFetchProdcutCategory } from "@/hooks/useFetchProductCategory.hook";
 import ProductCardSkeleton from "@/skeletons/productCard.skeleton";
-import {
-  productsFailure,
-  productStart,
-  shitProductDataSuccess,
-} from "@/store/actions/product.slice";
-import axios from "axios";
+
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Shirt = () => {
-  const { API_URI } = ENV_VAR;
-  const dispatch = useDispatch();
-  const { shirt, loading } = useSelector((state) => state.products);
+  const { loading, categoryProducts } = useSelector((state) => state.products);
+
+  const { fetchCategory } = useFetchProdcutCategory();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      dispatch(productStart());
-      try {
-        const res = await axios.get(`${API_URI}/api/product/category/shirt`);
-        const data = res.data;
-        dispatch(shitProductDataSuccess(data.product));
-      } catch (error) {
-        console.log(error);
-        dispatch(productsFailure(error));
-      }
-    };
-    fetchProducts();
-  }, [API_URI, dispatch]);
+    fetchCategory("shirt");
+  }, []);
+
   return (
     <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6  gap-4">
       {loading
         ? [...Array(12)].map((_, idx) => <ProductCardSkeleton key={idx} />)
-        : shirt.map((product) => (
+        : categoryProducts.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
     </div>

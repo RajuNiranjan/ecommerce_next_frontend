@@ -6,10 +6,7 @@ const initialState = {
   products: [],
   allProducts: [],
   SingleProduct: {},
-  shirt: [],
-  pant: [],
-  tshirt: [],
-  hoddie: [],
+  categoryProducts: [],
 };
 
 const productsSlice = createSlice({
@@ -41,21 +38,9 @@ const productsSlice = createSlice({
       state.SingleProduct = action.payload;
       state.loading = false;
     },
-    shitProductDataSuccess: (state, action) => {
-      state.shirt = action.payload;
+    setCategoryProducts: (state, action) => {
       state.loading = false;
-    },
-    pantProductDataSuccess: (state, action) => {
-      state.pant = action.payload;
-      state.loading = false;
-    },
-    tshirtProductDataSuccess: (state, action) => {
-      state.tshirt = action.payload;
-      state.loading = false;
-    },
-    hoddieProductDataSuccess: (state, action) => {
-      state.hoddie = action.payload;
-      state.loading = false;
+      state.categoryProducts = action.payload;
     },
   },
 });
@@ -66,10 +51,7 @@ export const {
   productsSuccess,
   allProductSuccess,
   singleProductDataSuccess,
-  shitProductDataSuccess,
-  pantProductDataSuccess,
-  tshirtProductDataSuccess,
-  hoddieProductDataSuccess,
+  setCategoryProducts,
 } = productsSlice.actions;
 
 export default productsSlice.reducer;
