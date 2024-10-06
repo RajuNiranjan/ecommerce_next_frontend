@@ -20,7 +20,7 @@ export const useSeller = () => {
   const router = useRouter();
 
   const fetchSeller = async () => {
-    dispatch(sellerSuccess());
+    dispatch(sellerStart());
     try {
       const res = await axios.get(`${API_URI}/api/seller`, {
         headers: {
