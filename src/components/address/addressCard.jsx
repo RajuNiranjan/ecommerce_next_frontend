@@ -25,6 +25,7 @@ import {
   addressFailure,
   addressStart,
 } from "@/store/actions/address.slice";
+import { useAddress } from "@/hooks/useAddress.hook";
 
 const AddressCard = () => {
   const { address } = useSelector((state) => state.address);
@@ -41,34 +42,12 @@ const AddressCard = () => {
     setIsDialogOpen(false);
   };
 
+  const { deleteAddress } = useAddress();
+
   const handleDeleteAddress = async (id) => {
     dispatch(addressStart());
-    try {
-      const res = await axios.delete(`${API_URI}/api/address/${id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      const data = res.data;
-      console.log(data);
-      toast({
-        title: data.message,
-      });
-      dispatch(addressDelete());
-    } catch (error) {
-      console.error(error?.response?.data);
-      dispatch(addressFailure(error?.response?.data));
 
-      const errorMessage =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred";
-
-      toast({
-        title: errorMessage,
-        duration: 1000,
-      });
-    }
+    await deleteAddress(id);
   };
 
   return (

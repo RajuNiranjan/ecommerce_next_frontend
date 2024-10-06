@@ -1,6 +1,7 @@
 import { useToast } from "@/components/ui/use-toast";
 import { ENV_VAR } from "@/config/envVar";
 import {
+  addressDelete,
   addressFailure,
   addressStart,
   addressSuccess,
@@ -115,5 +116,34 @@ export const useAddress = () => {
     }
   };
 
-  return { fetchAddress, addressRegistrationOrUpdate };
+  const deleteAddress = async (id) => {
+    dispatch(addressStart());
+    try {
+      const res = await axios.delete(`${API_URI}/api/address/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast({
+        title: res.data.message,
+        duration: 1000,
+      });
+      dispatch(addressDelete());
+    } catch (error) {
+      console.error(error);
+      dispatch(addressFailure(error?.response?.data));
+
+      const errorMessage =
+        typeof error?.response?.data === "string"
+          ? error?.response?.data
+          : error?.response?.data?.message || "An error occurred";
+
+      toast({
+        title: errorMessage,
+        duration: 1000,
+      });
+    }
+  };
+
+  return { fetchAddress, addressRegistrationOrUpdate, deleteAddress };
 };
