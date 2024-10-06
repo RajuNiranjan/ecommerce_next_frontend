@@ -20,6 +20,7 @@ import {
 import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
 import { useToast } from "@/components/ui/use-toast";
+import { useLogIn } from "@/hooks/useLogIn.hook";
 
 const LogIn = () => {
   const [logInForm, setLogInForm] = useState({
@@ -52,36 +53,11 @@ const LogIn = () => {
     }));
   };
 
+  const { login } = useLogIn();
+
   const handleSubmitLogInForm = async (e) => {
     e.preventDefault();
-    if (!logInForm.email || !logInForm.password) {
-      return toast({ title: "Please fill all the fields" });
-    }
-    dispatch(authStart());
-    try {
-      const res = await axios.post(`${apiUri}/api/auth/login`, logInForm);
-      const data = res.data;
-      localStorage.setItem("token", data.token);
-      dispatch(authSuccess(data.user));
-      router.push("/");
-      toast({
-        title: data.message,
-        duration: 1000,
-      });
-    } catch (error) {
-      console.error(error?.response?.data);
-      dispatch(authFailure(error?.response?.data));
-
-      const errorMessage =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred in login";
-
-      toast({
-        title: errorMessage,
-        duration: 1000,
-      });
-    }
+    await login(logInForm);
   };
 
   return (

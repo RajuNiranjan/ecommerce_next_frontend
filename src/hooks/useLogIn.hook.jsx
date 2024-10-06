@@ -9,14 +9,14 @@ import {
 } from "@/store/actions/auth.slice";
 import axios from "axios";
 
-export const useRegister = () => {
+export const useLogIn = () => {
   const { API_URI } = ENV_VAR;
   const { toast } = useToast();
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const register = async ({ userName, email, password }) => {
-    if (!userName || !email || !password) {
+  const login = async ({ email, password }) => {
+    if (!email || !password) {
       return toast({
         title: "All fields are required",
         duration: 1000,
@@ -24,8 +24,7 @@ export const useRegister = () => {
     }
     dispatch(authStart());
     try {
-      const res = await axios.post(`${API_URI}/api/auth/register`, {
-        userName,
+      const res = await axios.post(`${API_URI}/api/auth/login`, {
         email,
         password,
       });
@@ -35,17 +34,16 @@ export const useRegister = () => {
         title: res.data.message,
         duration: 1000,
       });
+
       router.push("/");
     } catch (error) {
-      console.log(error);
-
       console.error(error?.response?.data);
       dispatch(authFailure(error?.response?.data));
 
       const errorMessage =
         typeof error?.response?.data === "string"
           ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred in register";
+          : error?.response?.data?.message || "An error occurred in login";
 
       toast({
         title: errorMessage,
@@ -54,5 +52,5 @@ export const useRegister = () => {
     }
   };
 
-  return { register };
+  return { login };
 };
