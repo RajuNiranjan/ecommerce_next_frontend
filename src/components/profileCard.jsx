@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Mail, UserCircle } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Dialog,
   DialogContent,
@@ -21,28 +21,15 @@ import AddressCard from "./address/addressCard";
 import BecomeSellerRegCard from "./becomeSeller/becomeSellerRegCard";
 import { Badge } from "./ui/badge";
 import { useEffect } from "react";
-import { ENV_VAR } from "@/config/envVar";
-import axios from "axios";
 import Link from "next/link";
-
-import {
-  sellerFailure,
-  sellerStart,
-  sellerSuccess,
-} from "@/store/actions/seller.slice";
-import { Skeleton } from "./ui/skeleton";
-import {
-  addressFailure,
-  addressStart,
-  addressSuccess,
-} from "@/store/actions/address.slice";
+import AddressSkeleton from "@/skeletons/address.skeleton";
+import SellerSkeleton from "@/skeletons/seller.skeleton";
+import { useAddress } from "@/hooks/useAddress.hook";
+import { useSeller } from "@/hooks/useSelller.hook";
 
 const ProfileCard = () => {
   const { user } = useSelector((state) => state.auth);
-  const { API_URI } = ENV_VAR;
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-  const dispatch = useDispatch();
+
   const { address, loading: addressLoading } = useSelector(
     (state) => state.address
   );
@@ -50,51 +37,13 @@ const ProfileCard = () => {
     (state) => state.seller
   );
 
+  const { fetchAddress } = useAddress();
+  const { fetchSeller } = useSeller();
+
   useEffect(() => {
-    const fetchAddress = async () => {
-      if (!TOKEN) return;
-      dispatch(addressStart());
-      try {
-        const res = await axios.get(`${API_URI}/api/address`, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
-        const data = res.data.address;
-        dispatch(addressSuccess(data));
-      } catch (error) {
-        console.error("Failed to fetch address data:", error);
-        dispatch(addressFailure(error));
-      }
-    };
     fetchAddress();
-  }, [TOKEN, dispatch]);
-
-  useEffect(() => {
-    const fetchSeller = async () => {
-      if (!TOKEN) {
-        return;
-      }
-      dispatch(sellerStart());
-      try {
-        const response = await axios.get(`${API_URI}/api/seller`, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
-        const sellerData = response.data;
-
-        dispatch(sellerSuccess(sellerData.seller));
-      } catch (error) {
-        console.error("Failed to fetch seller data:", error);
-        dispatch(sellerFailure(error));
-      }
-    };
-
-    if (!seller) {
-      fetchSeller();
-    }
-  }, [API_URI, TOKEN, dispatch]);
+    fetchSeller();
+  }, []);
 
   return (
     <Card className="w-full h-full border border-gray-300 hover:shadow-lg transition-all duration-300 p-4 space-y-4">
@@ -110,20 +59,7 @@ const ProfileCard = () => {
       {/* ADDRESS */}
       <div className="w-full">
         {addressLoading ? (
-          <Card className="bg-transparent hover:shadow-xl transition-all duration-300 space-y-2 p-2">
-            <CardHeader className="p-0">
-              <Skeleton className="w-full h-3 rounded-full" />
-            </CardHeader>
-            <CardContent className="p-0 space-y-4">
-              <Skeleton className="w-full h-3 rounded" />
-            </CardContent>
-            <CardFooter className="p-0 flex justify-between items-center">
-              <Skeleton className="w-[80px] h-3 rounded" />
-              <Skeleton className="w-[80px] h-3 rounded" />
-              <Skeleton className="w-[80px] h-3 rounded" />
-              <Skeleton className="w-4 h-4 rounded-full" />
-            </CardFooter>
-          </Card>
+          <AddressSkeleton />
         ) : address ? (
           <div>
             <h1 className="font-medium text-md">Address</h1>
@@ -152,23 +88,7 @@ const ProfileCard = () => {
       <hr />
       {/* BECOME A SELLER */}
       {sellerLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="w-full h-[30px] rounded-lg" />
-          <Card className="hover:shadow-xl transition-all duration-300">
-            <CardHeader className="p-2">
-              <Skeleton className="w-[200px] h-[20px] rounded-full" />
-              <CardContent className="p-0 space-y-2">
-                <Skeleton className="w-[150px] h-[20px] rounded-full" />
-                <Skeleton className="w-full h-[60px] rounded-lg" />
-              </CardContent>
-            </CardHeader>
-            <CardFooter className="w-full p-2">
-              <Skeleton className="w-full h-[40px] rounded-lg" />
-            </CardFooter>
-          </Card>
-          {/* Skeleton for the "Become a Seller" button */}
-          <Skeleton className="w-full h-[40px] rounded-lg" />
-        </div>
+        <SellerSkeleton />
       ) : seller ? (
         <div className="space-y-2">
           <h1 className="font-medium">Store Information</h1>
