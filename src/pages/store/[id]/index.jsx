@@ -13,7 +13,8 @@ import { useSeller } from "@/hooks/useSelller.hook";
 const StoreHome = () => {
   const { user } = useSelector((state) => state.auth);
   const router = useRouter();
-  const { id: storeId } = useParams();
+  const params = useParams();
+  const storeId = params?.id;
 
   useEffect(() => {
     if (!user) {

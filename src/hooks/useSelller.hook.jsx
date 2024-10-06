@@ -10,7 +10,10 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 
 export const useSeller = () => {
-  const token = localStorage.getItem("token");
+  let token;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token");
+  }
   const dispatch = useDispatch();
   const { API_URI } = ENV_VAR;
   const { toast } = useToast();
