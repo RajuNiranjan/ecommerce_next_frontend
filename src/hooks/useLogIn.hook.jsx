@@ -29,7 +29,7 @@ export const useLogIn = () => {
         password,
       });
       localStorage.setItem("token", res.data.token);
-      dispatch(authSuccess(res.data.token));
+      dispatch(authSuccess(res.data.user));
       toast({
         title: res.data.message,
         duration: 1000,
