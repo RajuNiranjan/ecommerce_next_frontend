@@ -5,6 +5,11 @@ import {
   productsSuccess,
   productStart,
 } from "@/store/actions/product.slice";
+import {
+  sellerFailure,
+  sellerStart,
+  sellerSuccess,
+} from "@/store/actions/seller.slice";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 
@@ -152,5 +157,9 @@ export const useStore = () => {
     }
   };
 
-  return { fetchStoreProducts, deleteStoreProduct, addOrUpdateProduct };
+  return {
+    fetchStoreProducts,
+    deleteStoreProduct,
+    addOrUpdateProduct,
+  };
 };

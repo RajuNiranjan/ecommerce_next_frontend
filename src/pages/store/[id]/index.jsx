@@ -5,25 +5,15 @@ import TopSellingProductsCard from "@/components/sellerStore/topSellingProductsC
 import NewCustomersCard from "@/components/sellerStore/newCustomersCard";
 import AnalyticsCard from "@/components/sellerStore/analyticsCard";
 import SettingsCard from "@/components/sellerStore/settingsCard";
-import { ENV_VAR } from "@/config/envVar";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import {
-  sellerSuccess,
-  sellerFailure,
-  sellerStart,
-} from "@/store/actions/seller.slice";
+import { useSelector } from "react-redux";
+
 import { useParams, useRouter } from "next/navigation";
+import { useSeller } from "@/hooks/useSelller.hook";
 
 const StoreHome = () => {
   const { user } = useSelector((state) => state.auth);
   const router = useRouter();
-  const { API_URI } = ENV_VAR;
-  const params = useParams();
-  const id = params?.id;
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null; // Ensure token retrieval on the client-side
-  const dispatch = useDispatch();
+  const { id: storeId } = useParams();
 
   useEffect(() => {
     if (!user) {
@@ -31,31 +21,16 @@ const StoreHome = () => {
     }
   }, [user, router]);
 
+  const { fetchSellerById } = useSeller();
+
   useEffect(() => {
-    if (id && TOKEN) {
-      const fetchStore = async () => {
-        dispatch(sellerStart());
-        try {
-          const res = await axios.get(`${API_URI}/api/seller/${id}`, {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          });
-          const storeData = res.data;
-          dispatch(sellerSuccess(storeData.seller));
-        } catch (error) {
-          console.log(error);
-          dispatch(sellerFailure(error));
-        }
-      };
-      fetchStore();
-    }
-  }, [id, API_URI, TOKEN, dispatch]);
+    fetchSellerById(storeId);
+  }, []);
 
   return (
     <div className="p-4">
       <Tabs defaultValue="orders">
-        <TabsList className="mb-14 sticky top-20% flex flex-wrap ">
+        <TabsList className="mb-14 sticky top-20 z-40 bg-white flex flex-wrap ">
           <TabsTrigger value="orders">ORDERS</TabsTrigger>
           <TabsTrigger value="products">PRODUCTS</TabsTrigger>
           <TabsTrigger value="customers">CUSTOMERS</TabsTrigger>

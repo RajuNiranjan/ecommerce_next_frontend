@@ -32,6 +32,25 @@ export const useSeller = () => {
     }
   };
 
+  const fetchSellerById = async (storeId) => {
+    dispatch(sellerStart());
+    try {
+      const res = await axios.get(`${API_URI}/api/seller/${storeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("store seller index", res.data.seller);
+
+      dispatch(sellerSuccess(res.data.seller));
+    } catch (error) {
+      console.log(error);
+
+      dispatch(sellerFailure(error));
+    }
+  };
+
   const sellerRegistration = async ({
     bussinessName,
     storeName,
@@ -74,7 +93,6 @@ export const useSeller = () => {
           },
         }
       );
-      console.log("seller post", res.data.seller);
 
       dispatch(sellerSuccess(res.data.seller));
 
@@ -96,5 +114,5 @@ export const useSeller = () => {
     }
   };
 
-  return { fetchSeller, sellerRegistration };
+  return { fetchSeller, sellerRegistration, fetchSellerById };
 };

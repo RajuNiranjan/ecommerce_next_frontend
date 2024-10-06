@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useStore } from "@/hooks/useStore.hook";
 import { useSelector } from "react-redux";
+import TopSellingProductSkeleton from "@/skeletons/topSellingProduct.skeleton";
 
 const TopSellingProductsCard = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -97,43 +98,20 @@ const TopSellingProductsCard = () => {
                   </TableRow>
                 </TableHeader>
 
-                <TableBody>
-                  {loading ? (
-                    Array.from({ length: 5 }).map((_, index) => (
-                      <TableRow key={index}>
-                        <TableCell>
-                          <Skeleton className="w-[100px] h-[50px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[150px] h-[20px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[100px] h-[20px] rounded-md" />
-                        </TableCell>
-                        <TableCell>
-                          <Skeleton className="w-[50px] h-[20px] rounded-md" />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : Array.isArray(products) && products.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={8}>No Product Available</TableCell>
-                    </TableRow>
-                  ) : Array.isArray(products) && products.length > 0 ? (
-                    products.map((item, index) => (
-                      <TableRow key={index}>
+                {loading ? (
+                  [...Array(6)].map((_, idx) => (
+                    <TopSellingProductSkeleton key={idx} />
+                  ))
+                ) : Array.isArray(products) && products.length === 0 ? (
+                  <div>
+                    <h1>No Product Available</h1>
+                  </div>
+                ) : (
+                  Array.isArray(products) &&
+                  products.length > 0 &&
+                  products.map((item, index) => (
+                    <TableBody key={index}>
+                      <TableRow>
                         <TableCell>
                           <Image
                             src={item.images[0] || "/placeholder.jpg"}
@@ -168,13 +146,9 @@ const TopSellingProductsCard = () => {
                           </DropdownMenu>
                         </TableCell>
                       </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={8}>Invalid data format</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
+                    </TableBody>
+                  ))
+                )}
               </Table>
             </CardContent>
           </Card>
