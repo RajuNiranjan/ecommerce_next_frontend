@@ -17,6 +17,7 @@ import { Skeleton } from "./ui/skeleton";
 import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import Not_Found from "@/assets/json/no_data.json";
+import ProductCardSkeleton from "@/skeletons/productCard.skeleton";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -124,26 +125,7 @@ const WishListCard = () => {
   return (
     <>
       {loading ? (
-        Array(12)
-          .fill(0)
-          .map((_, index) => (
-            <Card key={index} className="w-full  h-[300px]">
-              <CardContent className="p-0 h-[70%] bg-slate-200">
-                <Skeleton className="h-full w-full" />
-              </CardContent>
-              <CardFooter className="p-2 flex flex-col gap-4  my-2 h-[30%]">
-                <Skeleton className="h-3 rounded-full w-full" />
-                <div className="flex gap-4 w-full justify-between items-center">
-                  <Skeleton className="h-3 w-[80%]  rounded-full " />
-                  <Skeleton className="h-3 w-[20%]  rounded-full " />
-                </div>
-                <div className="flex gap-4 w-full justify-between items-center">
-                  <Skeleton className="h-3 w-[80%]  rounded-full " />
-                  <Skeleton className="h-3 w-[20%]  rounded-full " />
-                </div>
-              </CardFooter>
-            </Card>
-          ))
+        [...Array(12)].map((_, idx) => <ProductCardSkeleton key={idx} />)
       ) : wishListItems.length === 0 ? (
         <div className="w-screen flex justify-center items-center">
           <Lottie animationData={Not_Found} loop autoplay />

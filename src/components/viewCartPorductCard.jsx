@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from "react";
-import { Card, CardContent, CardFooter } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
@@ -13,9 +13,9 @@ import {
   cartSuccess,
 } from "@/store/actions/cart.slice";
 import axios from "axios";
-import { Skeleton } from "./ui/skeleton";
 import dynamic from "next/dynamic";
 import Not_Found from "@/assets/json/no_data.json";
+import CartSkeleton from "@/skeletons/cart.skeleton";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
@@ -79,42 +79,7 @@ const ViewCartProductCard = () => {
   return (
     <>
       {loading ? (
-        Array(12)
-          .fill(0)
-          .map((_, index) => (
-            <Card key={index} className="h-max w-full sm:h-[200px] relative">
-              <CardContent className="h-full p-2">
-                <div className="grid grid-cols-2 gap-2 items-start justify-start">
-                  <div className="h-[180px]">
-                    <Skeleton className="w-full h-full" />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Skeleton className="h-5 w-full" />
-                    <Skeleton className="h-5 w-[80%]" />
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-5 w-32" />
-                      <Skeleton className="h-6 w-6 rounded-full" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-5 w-20" />
-                      <Skeleton className="h-6 w-6" />
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <Skeleton className="h-5 w-10" />
-                        <Skeleton className="h-4 w-6" />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Skeleton className="h-5 w-10" />
-                        <Skeleton className="h-4 w-6" />
-                      </div>
-                    </div>
-                    <Skeleton className="w-full h-5" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+        [...Array(12)].map((_, idx) => <CartSkeleton key={idx} />)
       ) : cartItems.length === 0 ? (
         <div className="w-screen">
           <Lottie animationData={Not_Found} loop autoplay />
@@ -135,7 +100,7 @@ const ViewCartProductCard = () => {
                   <Link href={`/products/${cart.product._id}`}>
                     <Image
                       width={150}
-                      height={150} // Adjust height to maintain aspect ratio
+                      height={150}
                       src={cart.product.images[0]}
                       alt={cart.product.productName}
                       className="h-full object-contain rounded-xl"
