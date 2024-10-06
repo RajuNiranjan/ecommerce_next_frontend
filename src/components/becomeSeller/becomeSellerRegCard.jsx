@@ -5,12 +5,10 @@ import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 import { useDispatch, useSelector } from "react-redux";
 import { EyeIcon, EyeOff } from "lucide-react";
-import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
-import { authFailure, authStart } from "@/store/actions/auth.slice";
 import { useRouter } from "next/navigation";
 import { useToast } from "../ui/use-toast";
-import { sellerSuccess } from "@/store/actions/seller.slice";
+import { useSeller } from "@/hooks/useSelller.hook";
 
 const BecomeSellerRegCard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -19,7 +17,6 @@ const BecomeSellerRegCard = () => {
     setShowPassword(!showPassword);
   };
 
-  const dispatch = useDispatch();
   const [sellerForm, setSellerForm] = useState({
     bussinessName: "",
     storeName: "",
@@ -29,11 +26,6 @@ const BecomeSellerRegCard = () => {
     storePassword: "",
     userId: user._id,
   });
-  const { toast } = useToast();
-
-  const { API_URI } = ENV_VAR;
-  const TOKEN = localStorage.getItem("token");
-  const router = useRouter();
   const handleChangeText = (e) => {
     const { id, value } = e.target;
     setSellerForm((prev) => ({
@@ -42,33 +34,11 @@ const BecomeSellerRegCard = () => {
     }));
   };
 
+  const { sellerRegistration } = useSeller();
+
   const handleSumbitSellerForm = async (e) => {
     e.preventDefault();
-    dispatch(authStart());
-    try {
-      const res = await axios.post(`${API_URI}/api/seller`, sellerForm, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      const data = res.data;
-
-      dispatch(sellerSuccess(data.data));
-      router.push(`/store/${data.seller._id}`);
-    } catch (error) {
-      console.error(error?.response?.data);
-      dispatch(authFailure(error?.response?.data));
-
-      const errorMessage =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred in login";
-
-      toast({
-        title: errorMessage,
-        duration: 1000,
-      });
-    }
+    await sellerRegistration(sellerForm);
   };
 
   return (
