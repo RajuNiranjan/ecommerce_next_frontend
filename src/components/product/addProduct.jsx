@@ -13,7 +13,7 @@ import { Textarea } from "../ui/textarea";
 import Image from "next/image";
 import { Loader2, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import {
   Card,
   CardContent,
@@ -22,24 +22,17 @@ import {
   CardTitle,
 } from "../ui/card";
 import { CldUploadWidget } from "next-cloudinary";
-import { ENV_VAR } from "@/config/envVar";
-import axios from "axios";
-import {
-  productStart,
-  productsFailure,
-  productsSuccess,
-} from "@/store/actions/product.slice";
-import { useToast } from "../ui/use-toast";
+
+import { useStore } from "@/hooks/useStore.hook";
+import { useParams } from "next/navigation";
 
 const AddProduct = ({ setShowAddProduct, editProduct }) => {
+  const { id: storeId } = useParams();
+
   let productId = editProduct?._id;
   const { user } = useSelector((state) => state.auth);
   const { seller } = useSelector((state) => state.seller);
-  const { API_URI } = ENV_VAR;
-  const TOKEN = localStorage.getItem("token");
-  const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.products);
-  const { toast } = useToast();
   const [addProduct, setAddProduct] = useState({
     productName: "",
     description: "",
@@ -103,67 +96,31 @@ const AddProduct = ({ setShowAddProduct, editProduct }) => {
     }));
   };
 
+  const { addOrUpdateProduct, fetchStoreProducts } = useStore();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const errors = [];
-
-    if (!addProduct.productName) errors.push("Product Name is required");
-    if (!addProduct.description) errors.push("Product Description is required");
-    if (!addProduct.categories) errors.push("Product Category is required");
-    if (addProduct.size.length === 0) errors.push("Sizes are required");
-    if (!addProduct.price) errors.push("Price is required");
-    if (!addProduct.offerPrice) errors.push("Offer Price is required");
-    if (!addProduct.stockLevel) errors.push("Stock Levels are required");
-    if (addProduct.images.length === 0)
-      errors.push("At least one image is required");
-    if (addProduct.colors.length === 0) errors.push("Colors are required");
-    if (!addProduct.fabric) errors.push("Fabric is required");
-    if (!addProduct.brand) errors.push("Brand is required");
-    if (!addProduct.saleType) errors.push("Sale Type is required");
-    if (!addProduct.userId) errors.push("User ID is required");
-    if (!addProduct.storeId) errors.push("Store ID is required");
-
-    if (errors.length > 0) {
-      toast({
-        title: "Validation Error",
-        description: errors.join(", "),
-        duration: 3000,
-      });
-      return;
-    }
-
-    dispatch(productStart());
-    try {
-      let res;
-      if (editProduct) {
-        res = await axios.patch(
-          `${API_URI}/api/product/${productId}`,
-          addProduct,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-      } else {
-        res = await axios.post(`${API_URI}/api/product`, addProduct, {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        });
-      }
-      const data = res.data;
-      toast({
-        title: data.message,
-        duration: 1000,
-      });
-      dispatch(productsSuccess(data.product));
-      setShowAddProduct(false);
-    } catch (error) {
-      console.log("Error:", error);
-      dispatch(productsFailure(error.response.data.message));
-    }
+    await addOrUpdateProduct({
+      productName: addProduct?.productName,
+      description: addProduct?.description,
+      categories: addProduct?.categories,
+      size: addProduct?.size,
+      price: addProduct?.price,
+      offerPrice: addProduct?.offerPrice,
+      stockLevel: addProduct?.stockLevel,
+      images: addProduct?.images,
+      colors: addProduct?.colors,
+      fabric: addProduct?.fabric,
+      brand: addProduct?.brand,
+      saleType: addProduct?.saleType,
+      userId: user?._id,
+      storeId: seller?._id,
+      editProduct,
+      productId,
+      setShowAddProduct,
+    });
+    fetchStoreProducts(storeId);
   };
 
   return (

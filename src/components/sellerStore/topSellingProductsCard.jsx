@@ -11,15 +11,9 @@ import {
 import { Button } from "../ui/button";
 import AddProduct from "../product/addProduct";
 import { EllipsisVerticalIcon, Plus, X } from "lucide-react";
-import { ENV_VAR } from "@/config/envVar";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
+
 import { useParams } from "next/navigation";
-import {
-  productStart,
-  productsFailure,
-  productsSuccess,
-} from "@/store/actions/product.slice";
+
 import { Skeleton } from "../ui/skeleton";
 import Image from "next/image";
 import {
@@ -28,61 +22,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useStore } from "@/hooks/useStore.hook";
+import { useSelector } from "react-redux";
 
 const TopSellingProductsCard = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editProduct, setEditProduct] = useState(null);
-  const { id } = useParams();
-  const { API_URI } = ENV_VAR;
-  const dispatch = useDispatch();
+  const { id: storeId } = useParams();
   const { products, loading } = useSelector((state) => state.products);
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   const handleShowAddProduct = () => {
     setShowAddProduct((prev) => !prev);
     setEditProduct(null);
   };
 
-  const fetchProducts = async () => {
-    dispatch(productStart());
-    try {
-      const { data } = await axios.get(`${API_URI}/api/product/${id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      if (Array.isArray(data.products)) {
-        dispatch(productsSuccess(data.products));
-      } else {
-        throw new Error("Invalid data format");
-      }
-    } catch (error) {
-      console.error("Error fetching product:", error.message || error);
-      dispatch(productsFailure(error));
-    }
-  };
+  const { fetchStoreProducts, deleteStoreProduct } = useStore();
 
   useEffect(() => {
-    if (!TOKEN || !id) return;
-    fetchProducts();
-  }, [, API_URI, dispatch, TOKEN, id]);
+    fetchStoreProducts(storeId);
+  }, []);
 
   const handleDeleteProduct = async (id) => {
-    dispatch(productStart());
-    try {
-      const res = await axios.delete(`${API_URI}/api/product/${id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      const data = res.data;
-      dispatch(productsSuccess(data.products));
-      fetchProducts();
-    } catch (error) {
-      console.log(error);
-      dispatch(productsFailure(error));
-    }
+    await deleteStoreProduct(id);
+    fetchStoreProducts(storeId);
   };
 
   const handleEditProduct = (product) => {

@@ -17,23 +17,12 @@ import {
 } from "@/components/ui/dialog";
 import { Edit3, TrashIcon } from "lucide-react";
 import AddAddressCard from "./addAddressCard";
-import { ENV_VAR } from "@/config/envVar";
-import axios from "axios";
-import { useToast } from "../ui/use-toast";
-import {
-  addressDelete,
-  addressFailure,
-  addressStart,
-} from "@/store/actions/address.slice";
 import { useAddress } from "@/hooks/useAddress.hook";
 
 const AddressCard = () => {
   const { address } = useSelector((state) => state.address);
-  const { API_URI } = ENV_VAR;
-  const TOKEN = localStorage.getItem("token");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const dispatch = useDispatch();
-  const { toast } = useToast();
   const formattedAddress = address
     ? `D.No: ${address.doorNo}, ${address.addressLine1}, ${address.addressLine2}, ${address.landMark}`
     : "";
