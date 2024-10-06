@@ -13,6 +13,7 @@ import {
 } from "@/store/actions/wishList.slice";
 import axios from "axios";
 import { ENV_VAR } from "@/config/envVar";
+import { useWishList } from "@/hooks/useWishList.hook";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -31,26 +32,13 @@ const ProductCard = ({ product }) => {
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
 
-  const fetchWishList = async () => {
-    dispatch(wishListStart());
-    try {
-      const res = await axios.get(`${API_URI}/api/wishlist/${user._id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      dispatch(wishListData(res.data.wishList));
-    } catch (error) {
-      console.log(error);
-      dispatch(wishListFailure(error));
-    }
-  };
+  const { fetchWishList } = useWishList();
 
   useEffect(() => {
     if (user && TOKEN) {
       fetchWishList();
     }
-  }, [API_URI, dispatch, TOKEN, user]);
+  }, []);
 
   const isInWishlist = (productId) => {
     return wishListItems.some((item) => item._id === productId);

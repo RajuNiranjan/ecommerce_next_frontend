@@ -10,23 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EyeIcon, EyeOff, Loader2 } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { ENV_VAR } from "@/config/envVar";
-import {
-  authFailure,
-  authStart,
-  authSuccess,
-} from "@/store/actions/auth.slice";
-import { useToast } from "@/components/ui/use-toast";
+import { useSelector } from "react-redux";
+import { useAccount } from "@/hooks/useAccount.hook";
 
 const AccountSettings = () => {
   const { loading, user } = useSelector((state) => state.auth);
-  const apiUri = ENV_VAR.API_URI;
   const userID = user?._id;
-  const dispatch = useDispatch();
-  const { toast } = useToast();
-  const TOKEN = localStorage.getItem("token");
   const [updateUserInfo, setUpdateUserInfo] = useState({
     password: "",
     newPassword: "",
@@ -45,46 +34,12 @@ const AccountSettings = () => {
     }));
   };
 
+  const { updateUserData } = useAccount();
+
   const handleSubmitUpdateUserInfo = async (e) => {
     e.preventDefault();
-    if (!updateUserInfo.password || !updateUserInfo.newPassword)
-      return toast({ title: "Please fill in all fields", duration: 1000 });
-
-    dispatch(authStart());
-    try {
-      const res = await axios.patch(
-        `${apiUri}/api/user/${userID}`,
-        updateUserInfo,
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      );
-      const data = res.data;
-
-      dispatch(authSuccess(data.user));
-
-      toast({
-        title: data.message,
-        duration: 1000,
-      });
-
-      setUpdateUserInfo({ password: "", newPassword: "" });
-    } catch (error) {
-      console.error(error?.response?.data);
-      dispatch(authFailure(error?.response?.data));
-
-      const errorMessage =
-        typeof error?.response?.data === "string"
-          ? error?.response?.data
-          : error?.response?.data?.message || "An error occurred";
-
-      toast({
-        title: errorMessage,
-        duration: 1000,
-      });
-    }
+    const { password, newPassword } = updateUserInfo;
+    await updateUserData({ password, newPassword, setUpdateUserInfo, userID });
   };
 
   return (
