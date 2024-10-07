@@ -53,6 +53,13 @@ export const useCart = () => {
   };
 
   const addOrRemoveFromCart = async ({ productId, size, color, quantity }) => {
+    if (!user) {
+      toast({
+        title: "Please login to add to cart",
+        duration: 1000,
+      });
+      return;
+    }
     if (!size) {
       toast({
         title: "Please select a size",
