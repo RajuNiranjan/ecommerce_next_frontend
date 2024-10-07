@@ -1,23 +1,15 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, CardFooter } from "./ui/card";
 import { Badge } from "./ui/badge";
 import Link from "next/link";
 import Image from "next/image";
 import { useToast } from "./ui/use-toast";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { ENV_VAR } from "@/config/envVar";
-import {
-  wishListFailure,
-  wishListStart,
-  wishListSuccess,
-  wishListData,
-} from "@/store/actions/wishList.slice";
-import { Skeleton } from "./ui/skeleton";
+import { useSelector } from "react-redux";
 import dynamic from "next/dynamic";
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 import Not_Found from "@/assets/json/no_data.json";
 import ProductCardSkeleton from "@/skeletons/productCard.skeleton";
+import { useWishList } from "@/hooks/useWishList.hook";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -31,38 +23,15 @@ const WishListCard = () => {
   const { wishListItems, loading } = useSelector((state) => state.wishList);
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
-  const { API_URI } = ENV_VAR;
-  const dispatch = useDispatch();
 
-  const fetchWishList = useCallback(async () => {
-    if (!user) return;
-
-    const TOKEN =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-    if (!TOKEN) return;
-
-    dispatch(wishListStart());
-
-    try {
-      const res = await axios.get(`${API_URI}/api/wishlist/${user._id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      dispatch(wishListData(res.data.wishList));
-    } catch (error) {
-      console.error(error);
-      dispatch(wishListFailure(error));
-    }
-  }, [API_URI, dispatch, user]);
+  const { fetchWishList, addOrRemoveFromWishList } = useWishList();
 
   useEffect(() => {
     fetchWishList();
-  }, [fetchWishList]);
+  }, []);
 
   const isInWishlist = (productId) => {
-    return wishListItems.some((item) => item._id === productId);
+    return wishListItems.find((item) => item._id === productId);
   };
 
   const handleAddOrRemoveWishList = async (productId) => {
@@ -74,52 +43,8 @@ const WishListCard = () => {
       return;
     }
 
-    const TOKEN =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-    dispatch(wishListStart());
-
-    try {
-      let res;
-      if (isInWishlist(productId)) {
-        // Remove from wishlist
-        res = await axios.delete(
-          `${API_URI}/api/wishlist/${user._id}/remove/${productId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Item Removed from Wishlist",
-          duration: 1000,
-        });
-      } else {
-        // Add to wishlist
-        res = await axios.post(
-          `${API_URI}/api/wishList`,
-          {
-            userId: user._id,
-            productId,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Item Added to Wishlist",
-          duration: 1000,
-        });
-      }
-      dispatch(wishListSuccess(res.data.wishList));
-      fetchWishList();
-    } catch (error) {
-      console.error(error);
-      dispatch(wishListFailure(error));
-    }
+    await addOrRemoveFromWishList(productId);
+    fetchWishList();
   };
 
   return (
@@ -134,12 +59,14 @@ const WishListCard = () => {
         wishListItems.map((wishListItem, index) => (
           <Card
             key={index}
-            className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out">
+            className="w-full overflow-hidden h-full bg-white hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out"
+          >
             {wishListItem.saleType && wishListItem.saleType !== "NONE" && (
               <Badge
                 className={`${
                   saleTypeColors[wishListItem.saleType]
-                } rounded-l absolute top-0 left-0 tracking-widest`}>
+                } rounded-l absolute top-0 left-0 tracking-widest`}
+              >
                 {wishListItem.saleType}
               </Badge>
             )}
@@ -151,7 +78,8 @@ const WishListCard = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="size-5 text-red-500 cursor-pointer">
+                  className="size-5 text-red-500 cursor-pointer"
+                >
                   <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                 </svg>
               ) : (
@@ -162,7 +90,8 @@ const WishListCard = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-5 text-white cursor-pointer">
+                  className="size-5 text-white cursor-pointer"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -185,7 +114,8 @@ const WishListCard = () => {
             <CardFooter className="p-2 my-2  h-[30%]  w-full flex justify-center flex-col items-start">
               <Link
                 href={`/products/${wishListItem._id}`}
-                className="transition-all duration-200 hover:text-red-500">
+                className="transition-all duration-200 hover:text-red-500"
+              >
                 <h1 className="text-md font-medium">
                   {wishListItem.productName}
                 </h1>

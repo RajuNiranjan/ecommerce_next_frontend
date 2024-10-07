@@ -16,7 +16,8 @@ import { useDispatch } from "react-redux";
 export const useStore = () => {
   const dispatch = useDispatch();
   const { API_URI } = ENV_VAR;
-  const token = localStorage.getItem("token");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { toast } = useToast();
 
   const fetchStoreProducts = async (storeId) => {

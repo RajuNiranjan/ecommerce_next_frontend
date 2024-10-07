@@ -1,11 +1,17 @@
 import ProductCard from "@/components/productCard";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useFetchAllProducts } from "@/hooks/useFetchAllProducts.hook";
+
 import ProductCardSkeleton from "@/skeletons/productCard.skeleton";
+import { useProduct } from "@/hooks/useProduct.hook";
 
 const Home = () => {
-  useFetchAllProducts();
+  const { fetchAllProducts } = useProduct();
+
+  useEffect(() => {
+    fetchAllProducts();
+  }, []);
+
   const { loading } = useSelector((state) => state.products);
   const { allProducts } = useSelector((state) => state.products);
 

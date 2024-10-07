@@ -12,7 +12,8 @@ import { useDispatch } from "react-redux";
 export const useSeller = () => {
   let token;
   if (typeof window !== "undefined") {
-    token = localStorage.getItem("token");
+    token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
   }
   const dispatch = useDispatch();
   const { API_URI } = ENV_VAR;

@@ -3,17 +3,10 @@ import { Card, CardContent, CardFooter } from "./ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "./ui/badge";
-import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "./ui/use-toast";
-import {
-  wishListFailure,
-  wishListStart,
-  wishListSuccess,
-  wishListData,
-} from "@/store/actions/wishList.slice";
-import axios from "axios";
-import { ENV_VAR } from "@/config/envVar";
+import { useSelector } from "react-redux";
+
 import { useWishList } from "@/hooks/useWishList.hook";
+import { useToast } from "./ui/use-toast";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -25,23 +18,16 @@ const saleTypeColors = {
 
 const ProductCard = ({ product }) => {
   const { wishListItems } = useSelector((state) => state.wishList);
-  const dispatch = useDispatch();
-  const { API_URI } = ENV_VAR;
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { toast } = useToast();
+  const { fetchWishList, addOrRemoveFromWishList } = useWishList();
   const { user } = useSelector((state) => state.auth);
 
-  const { fetchWishList } = useWishList();
-
   useEffect(() => {
-    if (user && TOKEN) {
-      fetchWishList();
-    }
+    fetchWishList();
   }, []);
 
   const isInWishlist = (productId) => {
-    return wishListItems.some((item) => item._id === productId);
+    return wishListItems.find((item) => item._id === productId);
   };
 
   const handleAddOrRemoveWishList = async (id) => {
@@ -52,48 +38,8 @@ const ProductCard = ({ product }) => {
       });
       return;
     }
-    dispatch(wishListStart());
-    try {
-      let res;
-      if (isInWishlist(id)) {
-        // Remove from wishlist
-        res = await axios.delete(
-          `${API_URI}/api/wishlist/${user._id}/remove/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Removed from wishlist",
-          duration: 1000,
-        });
-      } else {
-        // Add to wishlist
-        res = await axios.post(
-          `${API_URI}/api/wishList`,
-          {
-            userId: user._id,
-            productId: id,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Added to wishlist",
-          duration: 1000,
-        });
-      }
-      dispatch(wishListSuccess(res.data.wishList));
-      fetchWishList();
-    } catch (error) {
-      console.error(error);
-      dispatch(wishListFailure(error));
-    }
+    await addOrRemoveFromWishList(id);
+    fetchWishList();
   };
 
   return (
@@ -101,12 +47,14 @@ const ProductCard = ({ product }) => {
       {
         <Card
           key={product._id}
-          className="w-full h-full overflow-hidden bg-white  hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out">
+          className="w-full h-full overflow-hidden bg-white  hover:shadow-xl transition-all duration-700 relative hover:-translate-y-2 ease-in-out"
+        >
           {product.saleType !== "NONE" && (
             <Badge
               className={`${
                 saleTypeColors[product.saleType]
-              } rounded-l absolute top-0 left-0 tracking-widest`}>
+              } rounded-l absolute top-0 left-0 tracking-widest`}
+            >
               {product.saleType}
             </Badge>
           )}
@@ -117,7 +65,8 @@ const ProductCard = ({ product }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                className="size-5 text-red-500 cursor-pointer">
+                className="size-5 text-red-500 cursor-pointer"
+              >
                 <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
               </svg>
             ) : (
@@ -128,7 +77,8 @@ const ProductCard = ({ product }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 text-white cursor-pointer">
+                className="size-5 text-white cursor-pointer"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -152,7 +102,8 @@ const ProductCard = ({ product }) => {
           <CardFooter className="p-2 my-2 h-max md:h-[30%] w-full flex justify-center flex-col items-start">
             <Link
               href={`/products/${product._id}`}
-              className="transition-all duration-200 hover:text-red-500">
+              className="transition-all duration-200 hover:text-red-500"
+            >
               <h1 className="text-md font-medium">{product.productName}</h1>
             </Link>
             <div className="flex justify-between w-full">

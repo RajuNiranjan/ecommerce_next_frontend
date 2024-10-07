@@ -1,5 +1,5 @@
 import ProductCard from "@/components/productCard";
-import { useFetchProdcutCategory } from "@/hooks/useFetchProductCategory.hook";
+import { useProduct } from "@/hooks/useProduct.hook";
 import ProductCardSkeleton from "@/skeletons/productCard.skeleton";
 
 import React, { useEffect } from "react";
@@ -8,10 +8,10 @@ import { useSelector } from "react-redux";
 const Hoodie = () => {
   const { loading, categoryProducts } = useSelector((state) => state.products);
 
-  const { fetchCategory } = useFetchProdcutCategory();
+  const { fetchProductByCategory } = useProduct();
 
   useEffect(() => {
-    fetchCategory("hoddie");
+    fetchProductByCategory("hoddie");
   }, []);
   return (
     <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6  gap-4">

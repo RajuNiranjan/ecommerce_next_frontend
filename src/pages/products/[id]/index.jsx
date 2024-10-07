@@ -1,14 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { ENV_VAR } from "@/config/envVar";
-import axios from "axios";
 import { Heart, ShoppingBag, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
+import { useSelector } from "react-redux";
 import {
   Carousel,
   CarouselContent,
@@ -17,24 +14,10 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  wishListFailure,
-  wishListStart,
-  wishListSuccess,
-  wishListData,
-} from "@/store/actions/wishList.slice";
-import {
-  cartData,
-  cartFailure,
-  cartStart,
-  cartSuccess,
-} from "@/store/actions/cart.slice";
-import {
-  productsFailure,
-  productStart,
-  singleProductDataSuccess,
-} from "@/store/actions/product.slice";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useWishList } from "@/hooks/useWishList.hook";
+import { useCart } from "@/hooks/useCart.hook";
+import { useProduct } from "@/hooks/useProduct.hook";
 
 const saleTypeColors = {
   "HOT SALE": "bg-red-500",
@@ -47,140 +30,31 @@ const saleTypeColors = {
 const SingleProduct = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { API_URI } = ENV_VAR;
-  const dispatch = useDispatch();
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { toast } = useToast();
   const { user } = useSelector((state) => state.auth);
   const { wishListItems } = useSelector((state) => state.wishList);
   const { cartItems } = useSelector((state) => state.cart);
   const { loading, SingleProduct } = useSelector((state) => state.products);
-
   const [singleProductData, setSingleProductData] = useState({
     size: "",
     color: "",
     quantity: 1,
   });
 
+  const { fetchWishList, addOrRemoveFromWishList } = useWishList();
+  const { fetchCartItems, addOrRemoveFromCart } = useCart();
+  const { fetchSingleProduct } = useProduct();
+
   const offer =
     ((SingleProduct.price - SingleProduct.offerPrice) / SingleProduct.price) *
     100;
   const roundedOffer = Math.round(offer);
 
-  const fetchSingeProduct = async () => {
-    dispatch(productStart());
-    try {
-      if (id) {
-        const res = await axios.get(
-          `${API_URI}/api/product/singel_product/${id}`
-        );
-        const data = res.data;
-
-        dispatch(singleProductDataSuccess(data.product));
-      }
-    } catch (error) {
-      console.log(error);
-      dispatch(productsFailure(error));
-    }
-  };
-
-  const fetchWishList = async () => {
-    dispatch(wishListStart());
-    try {
-      const res = await axios.get(`${API_URI}/api/wishlist/${user._id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      dispatch(wishListData(res.data.wishList));
-    } catch (error) {
-      console.log(error);
-      dispatch(wishListFailure(error));
-    }
-  };
-
-  const fetchCartData = async () => {
-    dispatch(cartStart());
-    try {
-      const res = await axios.get(`${API_URI}/api/cart/${user._id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      const data = res.data;
-      dispatch(cartData(data.cartItems));
-    } catch (error) {
-      console.log(error);
-      dispatch(cartFailure(error));
-    }
-  };
-
   useEffect(() => {
-    fetchSingeProduct();
-    if (user && TOKEN) {
-      fetchWishList();
-      fetchCartData();
-    }
-  }, [API_URI, dispatch, TOKEN, user, id]);
-
-  const isInWishlist = (productId) => {
-    return wishListItems.some((item) => item._id === productId);
-  };
-
-  const isInCartList = (productId) => {
-    return cartItems.some((item) => item.product._id === productId);
-  };
-
-  const handleAddOrRemoveWishList = async (productId) => {
-    if (!user) {
-      toast({
-        title: "Please login to modify your wishlist",
-        duration: 1000,
-      });
-      return;
-    }
-    dispatch(wishListStart());
-    try {
-      let res;
-      if (isInWishlist(productId)) {
-        res = await axios.delete(
-          `${API_URI}/api/wishlist/${user._id}/remove/${productId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Removed from wishlist",
-          duration: 1000,
-        });
-      } else {
-        res = await axios.post(
-          `${API_URI}/api/wishList`,
-          {
-            userId: user._id,
-            productId,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Added to wishlist",
-          duration: 1000,
-        });
-      }
-      dispatch(wishListSuccess(res.data.wishList));
-      fetchWishList(); // Refetch wishlist to update UI
-    } catch (error) {
-      console.error(error);
-      dispatch(wishListFailure(error));
-    }
-  };
+    fetchSingleProduct(id);
+    fetchWishList();
+    fetchCartItems();
+  }, []);
 
   const getContrastColor = (backgroundColor) => {
     const hex = backgroundColor.replace("#", "");
@@ -192,9 +66,21 @@ const SingleProduct = () => {
     return luminance > 0.5 ? "black" : "white";
   };
 
-  const handleAddOrRemoveToCart = async (e, productId) => {
-    e.preventDefault();
+  // CHECKING IS IN WISHLIST
 
+  const isInWishlist = (productId) => {
+    return wishListItems.some((item) => item._id === productId);
+  };
+
+  // CHECK IS IN CART LIST
+
+  const isInCartList = (productId) => {
+    return cartItems.some((item) => item.product._id === productId);
+  };
+
+  //  ADD OR REMOVE FORM WISH LIST
+
+  const handleAddOrRemoveWishList = async (productId) => {
     if (!user) {
       toast({
         title: "Please login to modify your wishlist",
@@ -202,75 +88,17 @@ const SingleProduct = () => {
       });
       return;
     }
+    await addOrRemoveFromWishList(productId);
+    fetchWishList();
+  };
+
+  // ADD REMOVE FORM CART
+
+  const handleAddOrRemoveToCart = async (e, productId) => {
+    e.preventDefault();
     const { size, color, quantity } = singleProductData;
-
-    if (!size) {
-      toast({
-        title: "Please select a size",
-        duration: 1000,
-      });
-      return;
-    }
-
-    if (!color) {
-      toast({
-        title: "Please select a color",
-        duration: 1000,
-      });
-      return;
-    }
-
-    if (quantity <= 0) {
-      toast({
-        title: "Quantity must be at least 1",
-        duration: 1000,
-      });
-      return;
-    }
-    dispatch(cartStart());
-    try {
-      let res;
-
-      if (isInCartList(productId)) {
-        res = await axios.delete(
-          `${API_URI}/api/cart/${user._id}/remove/${productId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Removed from cart",
-          duration: 1000,
-        });
-      } else {
-        res = await axios.post(
-          `${API_URI}/api/cart`,
-          {
-            userId: user?._id,
-            productId: productId,
-            size,
-            color,
-            quantity,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          }
-        );
-        toast({
-          title: "Added to cart",
-          duration: 1000,
-        });
-      }
-      dispatch(cartSuccess());
-      fetchCartData();
-    } catch (error) {
-      console.log(error);
-      dispatch(cartFailure());
-    }
+    await addOrRemoveFromCart({ productId, size, color, quantity });
+    fetchCartItems();
   };
 
   return (

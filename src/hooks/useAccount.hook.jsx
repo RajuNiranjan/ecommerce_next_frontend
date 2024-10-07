@@ -9,7 +9,8 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 
 export const useAccount = () => {
-  const token = localStorage.getItem("token");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
   const { API_URI } = ENV_VAR;
   const dispatch = useDispatch();
   const { toast } = useToast();
