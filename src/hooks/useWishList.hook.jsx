@@ -1,4 +1,3 @@
-import { useToast } from "@/components/ui/use-toast";
 import { ENV_VAR } from "@/config/envVar";
 import {
   wishListData,
@@ -22,7 +21,6 @@ export const useWishList = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("wish list", res.data.wishList);
 
       dispatch(wishListData(res.data.wishList));
     } catch (error) {

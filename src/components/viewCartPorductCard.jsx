@@ -1,70 +1,29 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { X } from "lucide-react";
-import { ENV_VAR } from "@/config/envVar";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  cartData,
-  cartFailure,
-  cartStart,
-  cartSuccess,
-} from "@/store/actions/cart.slice";
-import axios from "axios";
+import { useSelector } from "react-redux";
 import dynamic from "next/dynamic";
 import Not_Found from "@/assets/json/no_data.json";
 import CartSkeleton from "@/skeletons/cart.skeleton";
+import { useCart } from "@/hooks/useCart.hook";
 
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const ViewCartProductCard = () => {
-  const { user } = useSelector((state) => state.auth);
   const { cartItems, loading } = useSelector((state) => state.cart);
-  const { API_URI } = ENV_VAR;
-  const dispatch = useDispatch();
 
-  const TOKEN =
-    typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-  const fetchCartData = useCallback(async () => {
-    if (!user || !TOKEN) return;
-
-    dispatch(cartStart());
-    try {
-      const res = await axios.get(`${API_URI}/api/cart/${user._id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      dispatch(cartData(res.data.cartItems));
-    } catch (error) {
-      console.error("Failed to fetch cart data:", error);
-      dispatch(cartFailure(error));
-    }
-  }, [API_URI, dispatch, TOKEN, user]);
+  const { fetchCartItems, removeFromCart } = useCart();
 
   useEffect(() => {
-    fetchCartData();
-  }, [fetchCartData]);
+    fetchCartItems();
+  }, []);
 
   const handleRemoveFromCart = async (id) => {
-    if (!user || !TOKEN) return;
-
-    dispatch(cartStart());
-    try {
-      await axios.delete(`${API_URI}/api/cart/${user._id}/remove/${id}`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      dispatch(cartSuccess());
-      fetchCartData();
-    } catch (error) {
-      console.error("Failed to remove item from cart:", error);
-      dispatch(cartFailure(error));
-    }
+    await removeFromCart(id);
+    fetchCartItems();
   };
 
   const getContrastColor = (backgroundColor) => {
@@ -88,10 +47,12 @@ const ViewCartProductCard = () => {
         cartItems.map((cart) => (
           <Card
             key={cart.product._id}
-            className="h-max w-full sm:h-[200px] relative">
+            className="h-max w-full sm:h-[200px] relative"
+          >
             <Badge
               onClick={() => handleRemoveFromCart(cart.product._id)}
-              className="absolute cursor-pointer -right-2 -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200">
+              className="absolute cursor-pointer -right-2 -top-2 p-1 bg-gray-300 text-gray-500 hover:bg-gray-200"
+            >
               <X size={12} />
             </Badge>
             <CardContent className="h-full p-2">
