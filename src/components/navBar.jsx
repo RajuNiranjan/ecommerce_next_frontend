@@ -48,7 +48,7 @@ const NavBar = () => {
     });
   };
   return (
-    <nav className="flex justify-between items-center h-20 px-5 md:px-20 shadow-lg sticky top-0 z-50 bg-white">
+    <nav className="flex justify-between items-center h-20 px-5 md:px-20 shadow-lg sticky top-0 z-50 bg-grey-500">
       <div>
         <Link
           href="/"
